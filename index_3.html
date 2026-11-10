@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f8fb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>DECA Finance Review</title>
+<style>
+:root{--bg:#f7f8fb;--card:#fff;--ink:#16181d;--mute:#6b7280;--line:#e6e8ee;--acc:#2f6bff;--good:#12a150;--bad:#e5484d;--amb:#f59e0b;--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 110px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
+h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+h2{font-size:16px;margin:4px 0 12px}
+.sub{color:var(--mute);font-size:13px}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;white-space:nowrap}
+nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:6px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));z-index:9}
+nav button{flex:1;max-width:150px;border:0;background:transparent;padding:10px 4px;border-radius:12px;font-size:14px;font-weight:600;color:var(--mute);cursor:pointer;transition:.2s}
+nav button.on{background:var(--acc);color:#fff;transform:translateY(-2px);box-shadow:0 6px 16px rgba(47,107,255,.3)}
+.view{display:none;animation:in .35s ease}.view.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:0 2px 10px rgba(20,30,60,.04)}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:9px;transition:width .4s ease}
+.tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--acc);background:#eef3ff;padding:4px 8px;border-radius:6px;margin:0 6px 10px 0}
+.tag.f{color:#7c3aed;background:#f3edff}
+.q{font-size:17px;font-weight:600;line-height:1.45;margin-bottom:16px}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px;font-size:15px;color:var(--ink);cursor:pointer;transition:transform .15s,border-color .2s,background .2s;line-height:1.35}
+.opt:hover{border-color:#c9d3ee}.opt:active{transform:scale(.98)}
+.opt.good{border-color:var(--good);background:#eafaf1;animation:pop .3s}
+.opt.bad{border-color:var(--bad);background:#fdeeee;animation:shake .35s}
+.opt:disabled{cursor:default}
+@keyframes pop{50%{transform:scale(1.03)}}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.why{margin-top:6px;padding:12px 14px;border-radius:12px;background:#f3f6ff;font-size:14px;line-height:1.5;display:none;animation:in .3s}.why.on{display:block}
+.row{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;border:0;border-radius:12px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;background:var(--acc);color:#fff;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.seg button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--mute);cursor:pointer;transition:.2s}
+.seg button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.done{text-align:center;padding:26px 10px}
+.big{font-size:48px;font-weight:800;color:var(--acc);letter-spacing:-1px;animation:pop .5s}
+.note{font-size:12px;color:var(--mute);margin-top:10px;line-height:1.5}
+/* lessons grid */
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.les{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 14px;cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;text-align:left}
+.les:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(20,30,60,.08)}
+.les .e{font-size:30px;display:block;margin-bottom:8px}
+.les b{font-size:14px;display:block;line-height:1.3}
+.les span{font-size:12px;color:var(--mute)}
+.les .ck{position:absolute;top:10px;right:12px;color:var(--good);font-weight:800}
+/* player */
+#player{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;flex-direction:column;max-width:720px;margin:0 auto}
+#player.on{display:flex;animation:in .3s}
+.segs{display:flex;gap:4px;padding:14px 16px 8px}
+.segs div{flex:1;height:4px;background:var(--line);border-radius:4px;overflow:hidden}
+.segs i{display:block;height:100%;width:0;background:var(--acc)}
+.ptop{display:flex;justify-content:space-between;align-items:center;padding:0 16px}
+.ptop b{font-size:14px}
+.x{border:0;background:var(--card);border:1px solid var(--line);width:34px;height:34px;border-radius:50%;font-size:15px;cursor:pointer}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 16px;position:relative;min-height:0}
+.stage svg{width:100%;max-height:100%;max-width:560px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 6px 24px rgba(20,30,60,.06)}
+.lab{width:100%;max-width:560px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}
+.lab svg{border:0;box-shadow:none;border-radius:0}
+.cap{padding:6px 22px 4px;font-size:17px;line-height:1.5;min-height:84px;text-align:center;animation:in .4s}
+.cap b{color:var(--acc)}
+.pctl{display:flex;gap:8px;padding:10px 16px calc(16px + env(safe-area-inset-bottom))}
+.tapL,.tapR{position:absolute;top:0;bottom:0;width:30%;cursor:pointer}.tapL{left:0}.tapR{right:0}
+/* svg anim */
+.a{opacity:0;transform-box:fill-box;animation:fu .55s var(--d,0s) forwards}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dr{stroke-dasharray:900;stroke-dashoffset:900;animation:dr 1.3s var(--d,0s) ease forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.gr{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:gr .8s var(--d,0s) cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes gr{to{transform:scaleY(1)}}
+.gx{transform-box:fill-box;transform-origin:left;transform:scaleX(0);animation:gx .9s var(--d,0s) cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes gx{to{transform:scaleX(1)}}
+.mv{transform-box:fill-box;animation:mv 1.4s var(--d,0s) ease-in forwards}
+@keyframes mv{0%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateX(var(--x))}}
+.pl{transform-box:fill-box;transform-origin:center;animation:fu .5s var(--d,0s) forwards,pl 1.6s calc(var(--d,0s) + .5s) ease-in-out infinite;opacity:0}
+@keyframes pl{50%{transform:scale(1.08)}}
+input[type=range]{width:100%;accent-color:var(--acc);margin:4px 0 10px}
+.lrow{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--mute)}
+.lrow b{color:var(--ink)}
+.out{margin-top:6px;padding:12px;border-radius:12px;background:#eef3ff;text-align:center;font-size:14px}
+.out b{display:block;font-size:24px;color:var(--acc)}
+/* cards */
+.flip{perspective:1000px;height:230px;cursor:pointer;margin-bottom:12px}
+.flip-in{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d}
+.flip.on .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:22px;box-shadow:0 4px 18px rgba(20,30,60,.06)}
+.face.back{transform:rotateY(180deg);background:#f3f6ff}
+.term{font-size:24px;font-weight:700;letter-spacing:-.3px}
+.def{font-size:17px;line-height:1.5}
+.hint{color:var(--mute);font-size:12px;margin-top:10px}
+/* calc */
+.calc{max-width:380px;margin:0 auto}
+.disp{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;text-align:right;margin-bottom:12px;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.disp .ex{font-size:20px;color:var(--mute);word-break:break-all;min-height:26px}
+.disp .rs{font-size:40px;font-weight:700;letter-spacing:-1px;word-break:break-all;transition:.2s}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.keys button{border:0;border-radius:16px;padding:18px 0;font-size:20px;font-weight:600;background:var(--card);border:1px solid var(--line);color:var(--ink);cursor:pointer;transition:transform .1s,background .2s}
+.keys button:active{transform:scale(.93)}
+.keys .op{background:#eef3ff;color:var(--acc)}
+.keys .fn{background:#f1f2f5;color:var(--mute)}
+.keys .eq{background:var(--acc);color:#fff;grid-column:span 3}
+.hist{font-size:13px;color:var(--mute);text-align:center;margin-top:12px;min-height:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><h1>DECA Finance Review</h1><div class="sub">Practice 59/100 → goal 75+</div></div>
+    <div class="pill" id="pill"></div>
+  </header>
+
+  <section class="view on" id="v-learn">
+    <h2>Watch a lesson, then get quizzed on it</h2>
+    <div class="lessons" id="lessons"></div>
+    <p class="note">Tap the right side of a lesson to skip ahead, the left side to go back. Lessons with a 🎛️ end with a hands-on lab.</p>
+  </section>
+
+  <section class="view" id="v-quiz">
+    <div class="seg" id="qmode">
+      <button data-m="smart" class="on">Smart mix</button>
+      <button data-m="weak">Weak spots</button>
+      <button data-m="tf">Rapid T/F</button>
+    </div>
+    <div class="bar"><i id="qbar"></i></div>
+    <div class="card" id="qcard"></div>
+    <p class="note">Every round shuffles which concepts come up, how they're asked (scenario, definition, name-the-term, true/false), and the answer order. A concept counts as mastered after 2 right in a row.</p>
+  </section>
+
+  <section class="view" id="v-cards">
+    <div class="seg" id="cmode"></div>
+    <div class="flip" id="flip"><div class="flip-in">
+      <div class="face"><div class="term" id="cterm"></div><div class="hint">tap to flip</div></div>
+      <div class="face back"><div class="def" id="cdef"></div></div>
+    </div></div>
+    <div class="row"><button class="btn ghost" id="cprev">← Prev</button><button class="btn ghost" id="cshuf">Shuffle</button><button class="btn" id="cnext">Next →</button></div>
+    <p class="note" id="ccount" style="text-align:center"></p>
+  </section>
+
+  <section class="view" id="v-calc">
+    <div class="calc">
+      <div class="disp"><div class="ex" id="cex"></div><div class="rs" id="crs">0</div></div>
+      <div class="keys" id="keys"></div>
+      <div class="hist" id="chist"></div>
+      <p class="note" style="text-align:center">Compound interest example: 8000 ÷ (1.04 ^ 3)</p>
+    </div>
+  </section>
+</div>
+
+<div id="player">
+  <div class="segs" id="psegs"></div>
+  <div class="ptop"><b id="ptitle"></b><button class="x" id="pclose">✕</button></div>
+  <div class="stage" id="pstage"></div>
+  <div class="cap" id="pcap"></div>
+  <div class="pctl"><button class="btn ghost" id="pprev">←</button><button class="btn ghost" id="ppause">⏸ Pause</button><button class="btn" id="pnext">Next →</button></div>
+</div>
+
+<nav>
+  <button data-v="learn" class="on">Learn</button>
+  <button data-v="quiz">Quiz</button>
+  <button data-v="cards">Cards</button>
+  <button data-v="calc">Calc</button>
+</nav>
+
+<script>
+/* ========== CONCEPT BANK ==========
+ [id, area, term, definition, why, group, scenarios[[question, correct, wrong, wrong, wrong]]]
+ All questions are written in my own words, not copied from DECA. */
+const RAW=[
+["consid","Business Law","Consideration","What each party gives or gets in exchange in a contract","Consideration = the value exchanged that makes a contract binding. Compensation is just pay for work.","",[
+ ["Jay pays $500 and Kim paints his fence. The $500 and the painting are the contract's:","Consideration","Compensation","Collateral","Capacity"],
+ ["A contract isn't binding unless both sides exchange something of value. That value is called:","Consideration","Commission","Equity","Liability"]]],
+["mm","Financial Analysis","Money market","Market for short-term, low-risk debt like Treasury bills","Money market = under 1 year, low risk (T-bills, commercial paper). Stocks and long bonds are the capital market.","",[
+ ["A money market fund mostly buys:","Treasury bills","Shares of stock","Real estate","30-year bonds"],
+ ["Which belongs in the money market, not the capital market?","A 3-month Treasury bill","Apple stock","A 20-year bond","A rental property"]]],
+["marital","Financial Analysis","Marital deduction","Assets left to a surviving spouse aren't hit by estate tax","The unlimited marital deduction: whatever passes to a spouse is deducted from the taxable estate.","",[
+ ["Which is an estate-tax deduction?","Property passing to a surviving spouse","Art left to children","A car left to a friend","Cash left to a cousin"],
+ ["Grandpa leaves his house to Grandma. For estate tax, this transfer is:","Deducted, since spouse transfers skip estate tax","Fully taxed","Taxed twice","Taxed only if she sells it"]]],
+["lean","Operations","Lean","Method focused on eliminating waste to maximize value","Lean = cut waste. Six Sigma = cut defects and variation.","ops",[
+ ["A factory wants to cut wasted time, motion, and extra inventory. Best method?","Lean","Six Sigma","Waterfall","SWOT"],
+ ["Which methodology's #1 goal is eliminating waste?","Lean","Six Sigma","Benchmarking","Agile"]]],
+["mgracct","Financial-Info Mgmt","Managerial accounting","Internal accounting that gathers cost and profit data to help managers","Managerial = internal data for decisions. Financial accounting is the public-facing side.","",[
+ ["How do managerial accountants help a company's management?","Accumulating data on costs and profits","Releasing financials to the public","Filing the CEO's personal taxes","Setting the stock price"],
+ ["Which task is managerial accounting, not financial accounting?","Tracking product costs for a manager","Publishing the annual report","Reporting to the SEC","Mailing statements to shareholders"]]],
+["agent","Business Law","Agent","Person who acts for a principal and must put the principal's interests first","Agents owe loyalty: always act in the principal's best interest.","fid",[
+ ["An agent's primary responsibility is to:","Act in the best interest of the principal","Advise the principal of their duties","Maximize their own commission","Stay neutral between both sides"],
+ ["A real estate agent grabs a better deal for herself instead of her client. She broke her duty to:","Act in the principal's best interest","Stay neutral","Advertise the home","Follow market trends"]]],
+["riskinv","Risk Management","Risk inventory","A list of a company's critical risks","Inventory = the list. Assessment = rating each risk afterward.","risk",[
+ ["A team is listing every major company-wide risk. They're building a:","Risk inventory","Risk assessment","Risk transfer","Risk appetite"],
+ ["Which step comes FIRST in risk management?","Listing the risks (risk inventory)","Buying insurance","Rating each risk's impact","Transferring the risk"]]],
+["home","Financial Analysis","Home bias","Overweighting your own country's investments because foreign ones seem riskier","Home bias comes from feeling that international investing is riskier, plus familiarity with home markets.","",[
+ ["What can lead an investor to develop a home bias?","Seeing international investing as riskier","Knowing foreign markets better","Lower foreign fees","Higher foreign returns"],
+ ["A U.S. investor holds 95% U.S. stocks because foreign markets feel risky. This is:","Home bias","Diversification","Hedging","Arbitrage"]]],
+["de","Financial Analysis","Debt-to-equity ratio","Debt ÷ equity; shows how risky a company is to invest in","High D/E = lots of borrowing = higher risk for investors.","",[
+ ["Why calculate a company's debt-to-equity ratio?","To judge the risk of investing in it","To see if it can hire more people","To measure sales growth","To set the dividend"],
+ ["Company A has a D/E of 0.4. Company B has 3.5. Which is riskier to invest in?","Company B","Company A","They're equal","Can't tell from D/E"]]],
+["marg","Economics","Marginal analysis","Comparing the extra cost vs extra benefit of producing more","Marginal = 'one more.' Do it if the extra benefit beats the extra cost.","",[
+ ["An analyst compares the costs and benefits of adding one more production line. This is:","Marginal analysis","A product road map","Break-even analysis","SWOT analysis"],
+ ["Should a bakery bake one more batch? It compares that batch's extra cost to its extra revenue. This is:","Marginal analysis","Cost allocation","Variance analysis","Benchmarking"]]],
+["protect","Economics","Protectionism","Tariffs and quotas that protect home industry and help avoid a trade deficit","Protectionism limits imports to shield domestic jobs and avoid a trade deficit.","",[
+ ["The U.S. uses protectionism mainly to:","Avoid a trade deficit","Resolve trade disputes","Lower consumer prices","Increase imports"],
+ ["A tariff on imported steel to help U.S. steelmakers is an example of:","Protectionism","Free trade","Globalization","Deregulation"]]],
+["fid","Business Law","Fiduciary","Anyone legally bound to act in another person's best interest","Boards, advisors, attorneys, and agents are fiduciaries. They must put you first.","fid",[
+ ["A board of directors makes decisions for the company as a:","Fiduciary","Consumer","Creditor","Regulator"],
+ ["Lucy lets her accountant, attorney, and insurance agent manage her money. They are her:","Fiduciaries","Beneficiaries","Creditors","Underwriters"]]],
+["infosys","Information Mgmt","Information systems","Collect and organize data to support decision-making","Info systems turn raw data into info for decisions. Pick the broad purpose.","info",[
+ ["A main reason businesses use information systems is to help with:","The decision-making process","The internal communication plan","Office layout","Hiring paperwork"],
+ ["A store's system shows which items sell best so the manager can restock. The system's main purpose:","Supporting decisions","Ensuring compliance","Running ads","Processing payroll"]]],
+["rule","Information Mgmt","Rule induction","Data mining that uses if-then rules to classify data","If-then rules = rule induction.","data",[
+ ["Which data mining technique uses if-then criteria to classify data?","Rule induction","Quantitative reasoning","Regression","Clustering"],
+ ["\"IF a customer buys diapers THEN tag them as a new parent.\" This technique is:","Rule induction","Regression","Futuring","Sampling"]]],
+["whole","Financial Analysis","Whole (ordinary) life insurance","Insurance with a death benefit plus a savings/investment account","Whole/ordinary life builds cash value. Term life is death benefit only.","ins",[
+ ["Which insurance combines death benefits with a savings and investment account?","Ordinary life","Liability","Term life","Disability"],
+ ["Which policy builds cash value you can borrow against over time?","Whole life","Term life","Auto","Renters"]]],
+["real","Financial Analysis","Real return","Your return after inflation; earnings must beat inflation to truly gain","Real return = return − inflation. Below inflation, you lose buying power.","",[
+ ["For an investment to have positive results, its earnings should:","Exceed the rate of inflation","Be documented","Be reinvested","Be tax-free"],
+ ["You earn 3% while inflation is 5%. Your buying power:","Fell about 2%","Rose 3%","Rose 8%","Didn't change"]]],
+["noncyc","Economics","Non-cyclical stocks","Stocks that stay steady through every phase of the business cycle","People buy food, power, and medicine in every phase, so these stocks stay steady.","",[
+ ["Across the business cycle, non-cyclical stock prices tend to:","Remain steady","Fall during expansion","Rise only in recessions","Swing more than the market"],
+ ["Which is most likely a non-cyclical stock?","A grocery chain","A luxury car maker","An airline","A cruise line"]]],
+["assert","Communication","Verbal assertiveness","Speaking up confidently, like starting conversations","'Verbal' = speaking. Posture and eye contact are nonverbal.","",[
+ ["How can you practice being VERBALLY assertive?","Start conversations","Stand up straight","Avoid eye contact","Wait to be asked"],
+ ["Which is verbal assertiveness, not body language?","Speaking up in a meeting","Good posture","A firm handshake","Eye contact"]]],
+["assoc","Professional Dev","Professional association","A group in your field for networking and career growth","Professional associations exist for networking. A credit union is a type of bank.","",[
+ ["To build long-term career relationships, finance workers join a local:","Professional association","Credit union","Bank branch","Brokerage"],
+ ["A young analyst wants to meet other finance pros and grow her network. Best move?","Join a professional association","Open a credit union account","Buy more stock","Switch banks"]]],
+["retained","Financial Analysis","Retained earnings","Profits a company keeps instead of paying as dividends","Net income − dividends = retained earnings.","",[
+ ["A company pays no dividends. That profit shows up in:","Retained earnings","Outstanding shares","Accounts payable","Treasury stock"],
+ ["Net income minus dividends paid equals:","Retained earnings","Gross profit","Total equity","Cash flow"]]],
+["finsvc","Professional Dev","Value of financial services","Pros provide services clients can't obtain by themselves","The value is expertise and access. Answers that insult clients are usually wrong.","",[
+ ["Finance pros provide clients with services the clients usually are:","Unable to obtain by themselves","Incapable of understanding","Not needing","Able to do cheaper alone"],
+ ["Why do clients usually hire financial planners?","For expertise and access they can't get alone","Because they can't understand money","Because the law requires it","To avoid all taxes"]]],
+["homework","Communication","Do your homework","Prepare facts and proof before trying to persuade","Proof comes from preparation.","",[
+ ["In persuasion, being ready to answer questions and give proof means you should:","Do your homework","Be reasonable","Speak louder","Stay vague"],
+ ["Before pitching a client, Mia researches data to back every claim. She is:","Doing her homework","Being reasonable","Being assertive","Networking"]]],
+["taxshield","Financial Analysis","Interest tax shield","Interest paid on debt is tax-deductible, making debt cheaper than equity","Interest expense lowers taxable income. Dividends don't.","",[
+ ["Why do U.S. corporations favor debt over equity financing?","Interest paid is deductible","Interest income is taxed as ordinary income","Debt never needs repaying","Debt adds voting shareholders"],
+ ["Which payment lowers a company's taxable income?","Interest on a loan","Dividends to shareholders","Issuing new stock","Retained earnings"]]],
+["fa","Financial Analysis","Financial analysis (startup)","Figuring out funding and costs, the first step when you lack capital","No money = figure out costs and funding before anything else.","",[
+ ["Monte wants to open a daycare but lacks capital. What should he address first?","Financial analysis","Marketing","Hiring","Logo design"],
+ ["A teen wants to start a food truck but has no savings. First step?","Analyze costs and funding","Post on social media","Hire staff","Pick a menu"]]],
+["prod","Operations","Productivity","Getting more done in the same time, which controls costs","'Eliminate ALL errors' is impossible. Absolute words are usually wrong.","",[
+ ["Employees control costs by organizing work, avoiding distractions, and:","Being more productive","Eliminating all errors","Working unpaid overtime","Skipping all breaks"],
+ ["Which helps an employee control business costs?","Getting more done per hour","Never making a single mistake","Ordering extra supplies","Working slower"]]],
+["demand","Economics","Law of demand","When price rises, quantity demanded falls","Price up → demand down. Price down → demand up.","",[
+ ["When a product's price is high, consumer demand is usually:","Low","High","Unchanged","Unlimited"],
+ ["Concert tickets jump from $50 to $300. Ticket demand will likely:","Drop","Rise","Stay the same","Double"]]],
+["lateral","Communication","Lateral communication","Communication between peers at the same level","Lateral = sideways, peer to peer. Training new hires is downward.","",[
+ ["Which conversation is lateral communication?","A salesperson discussing a meeting with fellow salespeople","A trainer teaching new hires","A CEO emailing all staff","A worker reporting to a boss"],
+ ["Two department managers coordinate a project. This communication is:","Lateral","Downward","Upward","External"]]],
+["fim","Financial-Info Mgmt","Financial-info management reports","Reports that guide managers' decisions on how to use funds","Moving funds = a decision. The report guided it.","info",[
+ ["Reports show the company is inefficient, so managers move funds. The reports are:","Guiding decision-making","Ensuring compliance","Tracking payroll","Auditing taxes"],
+ ["A budget report shows marketing overspent, so the CFO shifts money. The report's role:","Guiding a decision","Meeting a regulation","Advertising","Hiring"]]],
+["audit","Financial-Info Mgmt","Audit trail","A record of each transaction used to find data inconsistencies","Audit trail = step-by-step record to trace and catch errors or fraud.","",[
+ ["An audit trail in financial-info management is used to:","Identify data inconsistencies","Analyze customer preferences","Set prices","Recruit staff"],
+ ["An accountant traces a $50 mismatch step by step through the records. She's using:","An audit trail","A risk inventory","Regression","A marketing plan"]]],
+["regress","Information Mgmt","Regression","Data mining that predicts a number, like profit","Regression predicts a number. Classification and rule induction predict a group.","data",[
+ ["To forecast customer profitability, which prediction fits best?","Regression","Futuring","Classification","Rule induction"],
+ ["Predicting next month's dollar sales from past data uses:","Regression","Rule induction","Clustering","A SWOT"]]],
+["psafety","Risk Management","Product safety risk","Risk of injuries and lawsuits from unsafe products","Injuries + lawsuit = product safety.","risk",[
+ ["Cheap imported engine parts cause fires and a class-action lawsuit. This is a risk of:","Product safety","Domestic trade","Currency exchange","Interest rates"],
+ ["A toy's small parts choke kids and the company is sued. Which risk?","Product safety","Market risk","Credit risk","Inflation risk"]]],
+["selfc","Professional Dev","Positive self-concept","A healthy view of yourself, often paired with achievement","Healthy confidence drives achievement. Conceit is the negative version.","",[
+ ["A positive self-concept is often accompanied by:","Achievement","Conceit","Laziness","Isolation"],
+ ["Which is the healthy result of a positive self-concept?","Achieving goals","Bragging constantly","Ignoring feedback","Avoiding others"]]],
+["creative","Professional Dev","Creativity","Being inventive, imaginative, and improving old methods","Inventive + imaginative + improves things = creative.","",[
+ ["Carly is inventive, imaginative, and improves old methods. She's best described as:","Creative","Independent","Organized","Cautious"],
+ ["Someone who sees new possibilities and invents better ways of working shows:","Creativity","Loyalty","Punctuality","Caution"]]],
+["consol","Financial Analysis","Consolidation","Financial institutions merging, giving them more liquid capital","Merged firms pool capital. One-stop shopping helps the customer, not the institution.","merge",[
+ ["A benefit of consolidation TO financial institutions is:","More liquid capital","One-stop shopping","Less regulation","Fewer customers"],
+ ["Two regional banks merge. What do the banks themselves mainly gain?","More capital to work with","Fewer regulators","Lower rates for everyone","No competition ever"]]],
+["variable","Financial Analysis","Variable costs","Costs that change with the level of production","Variable costs move with output (materials). Fixed costs don't (rent).","cost",[
+ ["Costs tied to a company's production level are:","Variable","Operating","Fixed","Sunk"],
+ ["A bakery's flour bill doubles when it bakes twice as much. Flour is a:","Variable cost","Fixed cost","Sunk cost","Capital cost"]]],
+["pv","Financial Analysis","Present value","Today's value of future money: PV = FV ÷ (1 + r)ⁿ","PV = FV ÷ (1+r)ⁿ. Example: 8000 ÷ 1.04³ ≈ 7,112.","",[
+ ["You want $8,000 in 3 years and can earn 4% compounded. How much should you invest today?","$7,111.75","$7,821.47","$7,680.00","$8,320.00"],
+ ["You need $1,000 in 2 years at 5% compounded. About how much should you invest today?","$907","$950","$1,000","$1,102"]]],
+["alloc","Financial Analysis","Cost allocation","Assigning costs to the department responsible for them","Assigning a cost to a department = allocation.","cost",[
+ ["Jamila assigns a new email platform's cost to the marketing budget. She is:","Allocating costs","Doing cost-benefit analysis","Forecasting","Auditing"],
+ ["Splitting the office rent among departments by space used is:","Cost allocation","Marginal analysis","Variance analysis","Depreciation"]]],
+["wb","Economics","World Bank Group","Gives countries financing and advice for economic development","World Bank = development loans + advice. IMF = financial stability.","",[
+ ["Which institution provides financing and advice to countries for economic development?","World Bank Group","Commonwealth of Nations","NATO","OPEC"],
+ ["A developing country needs a loan to build roads and schools. It would go to the:","World Bank","Federal Reserve","SEC","FDIC"]]],
+["glob","Economics","Financial globalization","Linking finance worldwide, which helps undeveloped nations develop","Capital flows into emerging economies. Pick the broad, positive effect.","",[
+ ["Which is a result of financial globalization?","Development of previously undeveloped nations","Decline of developed nations","The end of trade","Fixed exchange rates"],
+ ["Foreign investors fund factories in a poor country, raising jobs and income. This shows:","Financial globalization","Protectionism","Deflation","Isolationism"]]],
+["conv","Financial Analysis","Convergence","Banking, insurance, and investing combining into one firm or system","Convergence = financial industries blending into one.","merge",[
+ ["A bank and an insurer merge onto one accounting system. This is:","Convergence","Increased liquidity","Deregulation","Diversification"],
+ ["One company now handles your checking, car insurance, and stock trading. This trend is:","Convergence","Protectionism","Inflation","Home bias"]]],
+["credit","Financial-Info Mgmt","Credit policy","A company's rules for deciding who gets credit","Credit decisions follow the credit policy. (Your file cut off here, so confirm this one.)","",[
+ ["When reviewing a credit report for a line of credit, Tom should use the company's:","Credit policy","Accounting method","Marketing plan","Org chart"],
+ ["A store requires a 650+ credit score for store credit. That rule is part of its:","Credit policy","Mission statement","Pricing strategy","Audit trail"]]],
+// --- extra concepts (from questions you got right + weak areas). Quizzed with definition / name-it / T-F formats.
+["sunk","Financial Analysis","Sunk cost","Money already spent that can't be recovered","","cost",[]],
+["equity","Financial Analysis","Shareholder's equity","Assets minus liabilities; what the owners own","","",[]],
+["captive","Risk Management","Captive insurance","A company sets up its own insurer when no outside firm will cover a risk","","ins",[]],
+["opex","Financial Analysis","Operating expense","Day-to-day costs like utilities and rent","","cost",[]],
+["fixed","Financial Analysis","Fixed costs","Costs that stay the same no matter how much you produce","","cost",[]],
+["sixsig","Operations","Six Sigma","Method focused on reducing defects and variation","","ops",[]],
+["riskmod","Risk Management","Risk modeling","Math models that estimate the probability of risks","","risk",[]],
+["variance","Financial-Info Mgmt","Variance analysis","Comparing planned costs to actual costs","","",[]],
+["benford","Information Mgmt","Benford's law","Applies to data that's measured, not assigned","","data",[]],
+["compliance","Risk Management","Compliance audit","Checks that a business follows government regulations","","risk",[]],
+["conflict","Business Law","Conflict of interest","A personal tie that could bias your professional judgment","","",[]],
+["dilemma","Business Law","Ethical dilemma","A choice with higher stakes because someone could be harmed","","",[]],
+["cycle","Economics","Business cycle","Expansion, peak, contraction, trough, repeating","","",[]],
+["range52","Financial Analysis","52-week price range","A stock's yearly high and low; shows its volatility","","",[]],
+["term","Financial Analysis","Term life insurance","Insurance with a death benefit only, no savings","","ins",[]],
+["unemp","Economics","Rising unemployment","Output falls and stock prices usually drop","","",[]],
+["charity","Financial Analysis","Charitable donation","A gift that's tax-deductible","","",[]]
+];
+const CON=RAW.map(r=>({id:r[0],area:r[1],t:r[2],d:r[3],why:r[4]||("“"+r[2]+"” = "+r[3]+"."),g:r[5],s:r[6]}));
+const byId=Object.fromEntries(CON.map(c=>[c.id,c]));
+
+/* ========== HELPERS ========== */
+const S={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $=s=>document.querySelector(s);
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+let M=S.get("mastery",{}), doneL=S.get("lessons",{});
+const mastered=()=>CON.filter(c=>(M[c.id]||0)>=2).length;
+const pill=()=>$("#pill").textContent=mastered()+"/"+CON.length+" mastered";
+const md=s=>s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+
+/* ========== NAV ========== */
+function go(v){
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
+  document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on",x.id==="v-"+v));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+/* ========== SVG BUILDERS ========== */
+const C1="#2f6bff",CG="#12a150",CR="#e5484d",CA="#f59e0b",CM="#9aa1ad",CK="#16181d";
+const t=(x,y,s,o={})=>`<text x="${x}" y="${y}" font-size="${o.z||13}" font-weight="${o.w||600}" fill="${o.c||CK}" text-anchor="${o.a||"middle"}" class="${o.cl||"a"}" style="--d:${o.d||0}s">${s}</text>`;
+const em=(x,y,s,z=36,d=0,cl="a",st="")=>`<text x="${x}" y="${y}" font-size="${z}" text-anchor="middle" class="${cl}" style="--d:${d}s;${st}">${s}</text>`;
+const bar=(x,y,w,h,c,d=0)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="${c}" class="gr" style="--d:${d}s"/>`;
+const box=(x,y,w,h,l,o={})=>`<g class="a" style="--d:${o.d||0}s"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${o.f||"#eef3ff"}" stroke="${o.s||"none"}" stroke-width="2"/><text x="${x+w/2}" y="${y+h/2+5}" font-size="${o.z||13}" font-weight="700" fill="${o.c||C1}" text-anchor="middle">${l}</text></g>`;
+const ln=(p,c=C1,d=0,w=3,dash="")=>`<path d="${p}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" class="dr" style="--d:${d}s" ${dash}/>`;
+const axes=()=>ln("M45 18 V170 H305","#c3c8d2",0,2);
+const svg=s=>`<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,sans-serif">${s}</svg>`;
+
+/* ========== LESSONS ========== */
+const L=[
+{e:"📉",n:"Supply, Demand & the Economy",c:["demand","noncyc","protect","cycle","unemp","marg"],s:[
+ {c:"**Law of demand**: when price goes UP, people buy LESS.",v:()=>axes()+t(48,13,"Price ↑",{z:11,c:CM,a:"start"})+t(305,188,"Quantity →",{z:11,c:CM,a:"end"})+ln("M70 35 L290 160",C1,.3,4)+t(100,40,"High price → few buyers",{z:11,c:CR,a:"start",d:1.2})+t(205,150,"Low price → many buyers",{z:11,c:CG,a:"end",d:1.6})+t(302,128,"Demand",{z:12,c:C1,d:1.4,a:"end"})},
+ {c:"Same product, two prices. The **$50** price scares most buyers away.",v:()=>t(160,22,"How many buyers?",{c:CM,z:12})+bar(65,70,60,100,CG,.2)+bar(195,140,60,30,CR,.7)+t(95,62,"Price $5",{d:.2})+t(225,132,"Price $50",{d:.7})+t(95,192,"🧍🧍🧍🧍🧍",{z:13,d:.4})+t(225,192,"🧍",{z:13,d:.9})},
+ {c:"**Business cycle**: expansion → peak → contraction → trough, then it repeats.",v:()=>ln("M15 125 Q65 25 115 95 T215 95 T315 95",C1,.2,4)+t(65,52,"Peak",{c:CG,d:.9})+t(165,152,"Trough",{c:CR,d:1.3})+t(30,165,"Expansion ↗",{z:11,c:CM,a:"start",d:1.6})+t(120,48,"Contraction ↘",{z:11,c:CM,a:"start",d:1.9})},
+ {c:"**Cyclical** stocks ride the wave. **Non-cyclical** (food, utilities, healthcare) stay steady because people always need them.",v:()=>t(15,22,"— Cyclical: airlines, cars, luxury",{z:11,c:CR,a:"start"})+t(15,40,"— Non-cyclical: food, power, medicine",{z:11,c:CG,a:"start",d:.8})+ln("M15 130 Q65 50 115 120 T215 120 T315 120",CR,.2,3)+ln("M15 120 H310",CG,.9,4)+em(280,112,"🍞⚡💊",14,1.4)},
+ {c:"**Unemployment ↑** means less spending, so output falls and stocks usually drop.",v:()=>[["👷","Jobs ↓"],["🛍️","Spending ↓"],["🏭","Output ↓"],["📉","Stocks ↓"]].map((k,i)=>em(42+i*78,85,k[0],30,i*.5)+box(10+i*78,100,66,40,k[1],{d:i*.5,z:11,f:"#fdeeee",c:CR})+(i<3?t(78+i*78,125,"→",{c:CM,d:i*.5+.3}):"")).join("")},
+ {c:"**Protectionism**: tariffs and quotas block imports to protect home industry and avoid a **trade deficit**.",v:()=>em(70,110,"🏭",48)+t(70,150,"Home industry")+em(255,110,"🚢",48,.3)+t(255,150,"Imports",{d:.3})+em(162,110,"🧱",44,.8)+t(162,62,"TARIFF",{c:CR,d:1,z:14})},
+ {c:"**Marginal analysis**: compare the EXTRA benefit vs EXTRA cost of one more unit. Benefit bigger? Do it.",v:()=>t(160,22,"Add one more production line?",{c:CM})+bar(70,50,70,120,CG,.3)+bar(185,98,70,72,CR,.7)+t(105,44,"+$50k benefit",{d:.3,c:CG})+t(220,92,"+$30k cost",{d:.7,c:CR})+t(160,192,"Benefit > cost → ✅",{d:1.3,c:CG,z:14})},
+ {lab:"demand",c:"🎛️ **Lab**: drag the price and watch demand react."}]},
+{e:"⏳",n:"Time Value of Money",c:["pv","real"],s:[
+ {c:"**Time value of money**: $1 today is worth more than $1 later, because today's dollar can earn interest.",v:()=>em(75,100,"💵",54)+t(75,150,"$100 today")+t(160,105,"→",{z:30,c:CM,d:.6})+em(245,100,"💵💵",44,1)+t(245,150,"$110 in a year",{d:1,c:CG})},
+ {c:"**Future value**: $1,200 at 10% for one year grows to **$1,320**.",v:()=>bar(80,52,60,118,"#c7d6ff",.2)+bar(185,40,60,130,C1,.8)+t(110,44,"$1,200",{d:.2})+t(215,32,"$1,320",{d:.8,c:C1})+t(110,190,"Today",{c:CM,z:12})+t(215,190,"After 1 yr @10%",{c:CM,z:12,d:.8})},
+ {c:"**Compounding**: you earn interest on your interest, so growth speeds up each year.",v:()=>[100,110,121,133,146,161,177].map((v,i)=>{const h=v/177*125;return bar(28+i*40,170-h,28,h,i?C1:"#c7d6ff",i*.3)+t(42+i*40,164-h,"$"+v,{z:10,d:i*.3+.3})+t(42+i*40,188,"Y"+i,{z:10,c:CM})}).join("")},
+ {c:"**Present value** runs it backwards: to have $8,000 in 3 yrs at 4%, invest about **$7,112** today.",v:()=>bar(200,40,60,130,C1,.1)+t(230,32,"$8,000",{d:.1})+t(230,190,"Goal (yr 3)",{c:CM,z:12})+t(155,100,"÷ 1.04³",{c:CA,d:.7,z:14})+t(155,120,"←",{z:26,c:CA,d:.7})+bar(60,54,60,116,CG,1.2)+t(90,46,"$7,112",{d:1.2,c:CG})+t(90,190,"Invest today",{c:CM,z:12,d:1.2})},
+ {c:"Memorize these. Going forward in time = **multiply**. Going back = **divide**.",v:()=>t(160,75,"FV = PV × (1 + r)ⁿ",{z:22})+t(160,125,"PV = FV ÷ (1 + r)ⁿ",{z:22,d:.7,c:C1})+t(160,168,"r = rate (4% → 0.04) · n = years",{z:12,c:CM,d:1.3})},
+ {c:"**Real return** = return − inflation. Earn 3% while prices rise 5%? You LOST 2% of buying power.",v:()=>`<line x1="20" y1="140" x2="300" y2="140" stroke="#c3c8d2" stroke-width="2"/>`+bar(50,86,60,54,CG,.2)+t(80,78,"Return 3%",{d:.2,c:CG})+bar(140,50,60,90,CR,.7)+t(170,42,"Inflation 5%",{d:.7,c:CR})+`<rect x="230" y="140" width="60" height="36" rx="5" fill="${CA}" class="a" style="--d:1.3s"/>`+t(260,130,"Real −2%",{d:1.3,c:CA})},
+ {lab:"tvm",c:"🎛️ **Lab**: change the amount, rate, and years. Watch compounding happen."}]},
+{e:"🏦",n:"Markets & Institutions",c:["mm","consol","conv","wb","glob","home"],s:[
+ {c:"**Money market** = short-term, low-risk debt. **Capital market** = long-term stocks and bonds.",v:()=>`<rect x="12" y="15" width="143" height="170" rx="14" fill="#eef3ff" class="a"/><rect x="165" y="15" width="143" height="170" rx="14" fill="#fff6e6" class="a" style="--d:.8s"/>`+t(83,40,"Money market",{c:C1,z:14})+["⏱ Under 1 year","🧾 T-bills","📄 Comm. paper","🛟 Low risk"].map((s,i)=>t(28,72+i*28,s,{a:"start",z:12,d:.3+i*.15})).join("")+t(236,40,"Capital market",{c:CA,z:14,d:.8})+["📅 Over 1 year","📈 Stocks","💵 Bonds","🎢 More risk"].map((s,i)=>t(181,72+i*28,s,{a:"start",z:12,d:1.1+i*.15})).join("")},
+ {c:"**Consolidation**: institutions merge, so the combined firm has **more liquid capital**.",v:()=>em(70,105,"🏦",46,0,"mv","--x:90px")+em(250,105,"🏦",46,0,"mv","--x:-90px")+em(160,110,"🏦",72,1.3)+t(160,165,"More liquid capital 💰",{d:1.6,c:CG,z:15})},
+ {c:"**Convergence**: banking, insurance, and investing blend into ONE firm or system.",v:()=>box(10,20,90,40,"🏦 Bank")+box(115,20,90,40,"🛡️ Insurance",{d:.2})+box(220,20,90,40,"📈 Investing",{d:.4})+t(55,92,"↘",{z:24,c:CM,d:.8})+t(160,92,"↓",{z:24,c:CM,d:.8})+t(265,92,"↙",{z:24,c:CM,d:.8})+box(60,120,200,50,"One firm, one system",{d:1.2,f:C1,c:"#fff",z:15})},
+ {c:"**World Bank Group**: loans + advice to help countries develop. (The IMF handles financial stability.)",v:()=>em(70,100,"🏛️",50)+t(70,145,"World Bank")+t(160,100,"💵 →",{z:22,d:.6})+em(250,100,"🌍",50,.9)+t(250,145,"Developing country",{d:.9,z:12})+t(160,182,"Financing + advice for development",{c:C1,d:1.3})},
+ {c:"**Financial globalization**: money crosses borders, helping undeveloped nations grow.",v:()=>[[50,45],[270,45],[50,160],[270,160]].map((p,i)=>ln(`M160 100 L${p[0]} ${p[1]}`,"#c7d6ff",.4+i*.2,2)+em(p[0],p[1]+10,"🏭",26,.8+i*.2)).join("")+em(160,118,"🌐",60,.1)+t(160,195,"Investment → jobs → growth",{c:CG,d:1.8,z:12})},
+ {c:"**Home bias**: investors overload on their own country because foreign markets feel riskier.",v:()=>`<rect x="25" y="75" width="270" height="44" rx="10" fill="#eef0f4"/><rect x="25" y="75" width="216" height="44" rx="10" fill="${C1}" class="gx" style="--d:.3s"/>`+t(133,103,"🏠 Home 80%",{c:"#fff",d:.9})+t(268,103,"🌐 20%",{d:1.1,z:12})+t(160,160,"\"Foreign feels risky\" → home bias",{c:CR,d:1.4})}]},
+{e:"⚖️",n:"Debt vs Equity",c:["de","taxshield","retained","equity"],s:[
+ {c:"Companies raise money 2 ways: **debt** (borrow, pay interest) or **equity** (sell ownership).",v:()=>box(15,40,135,60,"🏦 Debt",{z:17})+t(82,125,"Borrow money",{z:12,d:.3})+t(82,145,"Pay interest",{z:12,d:.4})+box(170,40,135,60,"📜 Equity",{d:.7,z:17,f:"#eafaf1",c:CG})+t(237,125,"Sell shares",{z:12,d:1})+t(237,145,"Share profits",{z:12,d:1.1})},
+ {c:"**D/E ratio** = debt ÷ equity. Higher means more borrowing, so it's **riskier** to invest in.",v:()=>bar(70,120,60,50,C1,.1)+bar(70,100,60,20,CR,.5)+bar(195,140,60,30,C1,.1)+bar(195,35,60,105,CR,.8)+t(100,92,"D/E 0.4 ✅",{d:.6,c:CG})+t(225,27,"D/E 3.5 ⚠️",{d:1,c:CR})+t(100,190,"Company A",{c:CM,z:12})+t(225,190,"Company B",{c:CM,z:12})+t(160,60,"■ debt",{c:CR,z:11,d:1.3})+t(160,76,"■ equity",{c:C1,z:11,d:1.3})},
+ {c:"Why U.S. firms like debt: **interest paid is tax-deductible**, so they pay less tax. Dividends don't get that break.",v:()=>t(160,20,"Taxable income",{c:CM})+bar(70,60,60,110,C1,.2)+t(100,52,"$100",{d:.2})+t(100,190,"Stock-funded",{z:12,c:CM})+`<rect x="195" y="60" width="60" height="22" rx="5" fill="none" stroke="${CM}" stroke-dasharray="4 3" class="a" style="--d:.8s"/>`+t(225,75,"−$20 int.",{z:10,c:CM,d:.8})+bar(195,82,60,88,CG,.9)+t(225,100,"$80",{d:1.1,c:"#fff"})+t(225,190,"Debt-funded",{z:12,c:CM})},
+ {c:"Profit that isn't paid out as dividends stays in the company as **retained earnings**.",v:()=>em(160,55,"💰",44)+t(160,82,"Net profit")+ln("M140 92 L75 125",CM,.5,2)+ln("M180 92 L245 125",CG,.5,3)+box(10,130,130,44,"👥 Dividends",{d:.9,f:"#f1f2f5",c:CM})+box(180,130,130,44,"🏢 Retained",{d:1.1,f:"#eafaf1",c:CG})},
+ {c:"**Shareholder's equity** = assets − liabilities. It's what the owners actually own.",v:()=>bar(35,40,60,130,C1,.1)+t(65,32,"Assets",{d:.1})+t(118,110,"−",{z:30,d:.5})+bar(140,90,60,80,CR,.6)+t(170,82,"Liabilities",{d:.6,z:12})+t(225,110,"=",{z:30,d:1})+bar(248,120,60,50,CG,1.1)+t(278,112,"Equity",{d:1.1,c:CG})}]},
+{e:"🧮",n:"Costs",c:["variable","fixed","sunk","alloc","prod","opex"],s:[
+ {c:"**Fixed costs** stay the same (rent). **Variable costs** rise with production (materials).",v:()=>axes()+t(48,13,"Cost $",{z:11,c:CM,a:"start"})+t(305,188,"Units made →",{z:11,c:CM,a:"end"})+ln("M45 115 H300",CA,.3,4)+t(295,107,"Fixed (rent)",{c:CA,a:"end",z:12,d:1})+ln("M45 170 L300 35",C1,1.1,4)+t(240,52,"Variable",{c:C1,a:"end",z:12,d:2})},
+ {c:"**Sunk cost**: money already spent that you can't get back, like training an employee who quit. Ignore it in decisions.",v:()=>em(105,85,"💸",50)+em(215,130,"🕳️",60,.6)+t(160,185,"Already spent → can't recover",{c:CR,d:1.1})},
+ {c:"**Cost allocation**: assign each cost to the department that uses it.",v:()=>box(100,15,120,40,"📧 Email tool $")+ln("M160 58 L60 125",CM,.5,2)+ln("M160 58 L160 125",C1,.5,4)+ln("M160 58 L260 125",CM,.5,2)+box(10,130,95,40,"Sales",{d:1,f:"#f1f2f5",c:CM})+box(112,130,96,40,"Marketing ✅",{d:1.1,f:C1,c:"#fff"})+box(215,130,95,40,"HR",{d:1,f:"#f1f2f5",c:CM})},
+ {c:"**Operating expenses**: the day-to-day costs of running the business, like utilities and rent.",v:()=>[["💡","Utilities"],["🏢","Rent"],["👔","Salaries"],["🧻","Supplies"]].map((k,i)=>em(48+i*75,95,k[0],38,i*.3)+t(48+i*75,135,k[1],{z:12,d:i*.3})).join("")},
+ {c:"**Productivity**: more done in the same time = lower cost. (Watch out: 'eliminate ALL errors' is never right.)",v:()=>bar(70,110,60,60,"#c7d6ff",.2)+bar(190,70,60,100,CG,.7)+t(100,102,"10 tasks/hr",{d:.2,z:12})+t(220,62,"15 tasks/hr",{d:.7,z:12,c:CG})+t(100,190,"Distracted",{c:CM,z:12})+t(220,190,"Organized",{c:CM,z:12})},
+ {lab:"cost",c:"🎛️ **Lab**: make more units. Fixed stays flat, variable climbs."}]},
+{e:"📜",n:"Law & Ethics",c:["consid","agent","fid","conflict","dilemma"],s:[
+ {c:"**Consideration**: what each side gives in a contract. No exchange of value = no contract.",v:()=>em(55,105,"🧑",50)+t(55,150,"Jay")+em(265,105,"🧑‍🎨",50)+t(265,150,"Kim")+t(160,80,"💵 $500 →",{d:.5,z:15})+t(160,120,"← 🎨 painting",{d:1,z:15})+t(160,182,"= Consideration",{c:C1,d:1.5,z:17})},
+ {c:"An **agent** works for a **principal** and must always put the principal's interest first.",v:()=>em(65,90,"🧑‍💼",52)+t(65,135,"Principal")+em(255,90,"🕴️",52,.3)+t(255,135,"Agent",{d:.3})+t(160,85,"← works for",{d:.7})+t(160,180,"Rule: principal's interest FIRST",{c:C1,d:1.2})},
+ {c:"**Fiduciary**: anyone legally bound to act in YOUR best interest, like boards, accountants, attorneys, and agents.",v:()=>em(160,110,"🧑",44,.1)+t(160,142,"You",{d:.1})+[[55,55,"🏛️","Board"],[265,55,"📊","Accountant"],[55,150,"⚖️","Attorney"],[265,150,"🛡️","Ins. agent"]].map((k,i)=>em(k[0],k[1],k[2],32,.4+i*.25)+t(k[0],k[1]+22,k[3],{z:11,d:.4+i*.25})).join("")},
+ {c:"**Conflict of interest**: a personal tie that could bias your work. Smart pros avoid it.",v:()=>em(160,100,"🤝",64)+em(205,70,"❌",30,.8)+t(160,160,"Personal tie + work decision",{d:.4})},
+ {c:"**Ethical dilemma**: the stakes are higher because someone could get hurt.",v:()=>em(160,105,"⚖️",70)+t(160,165,"Someone could be harmed → high stakes",{c:CR,d:.6})}]},
+{e:"💾",n:"Data & Info Systems",c:["infosys","rule","regress","audit","mgracct","fim","benford","variance"],s:[
+ {c:"**Information systems** turn raw data into info that drives **decision-making**.",v:()=>[0,1,2,3,4,5].map(i=>`<circle cx="${25+(i%2)*22}" cy="${60+(i>>1)*35}" r="7" fill="${CM}" class="a" style="--d:${i*.1}s"/>`).join("")+t(85,108,"→",{z:24,c:CM,d:.7})+box(105,75,110,50,"Info system",{d:.9})+t(232,108,"→",{z:24,c:CM,d:1.2})+em(275,112,"💡",44,1.4)+t(275,150,"Decision",{d:1.4,c:CG})},
+ {c:"**Rule induction**: IF-THEN rules sort data into groups.",v:()=>box(85,15,150,40,"IF income > $50k?")+ln("M130 58 L75 120",CG,.6,3)+ln("M190 58 L245 120",CR,.6,3)+t(90,90,"yes",{c:CG,d:.8,z:12})+t(232,90,"no",{c:CR,d:.8,z:12})+box(10,125,130,44,"THEN approve ✅",{d:1.1,f:"#eafaf1",c:CG})+box(180,125,130,44,"THEN review 🔍",{d:1.3,f:"#fdeeee",c:CR})},
+ {c:"**Regression** predicts a NUMBER (like profit) by fitting a trend line through the data.",v:()=>axes()+[[70,150],[95,138],[115,142],[140,118],[165,112],[190,95],[210,98],[235,75],[260,68]].map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="${C1}" class="a" style="--d:${i*.12}s"/>`).join("")+ln("M55 160 L295 50",CA,1.3,3)+t(290,40,"Predicted $",{c:CA,a:"end",d:2,z:12})},
+ {c:"**Audit trail**: a step-by-step record of every transaction, used to spot **inconsistencies**.",v:()=>[0,1,2,3,4].map(i=>em(40+i*60,100,"🧾",34,i*.25)+(i<4?t(70+i*60,96,"→",{c:CM,d:i*.25+.1}):"")).join("")+`<circle cx="220" cy="88" r="28" fill="none" stroke="${CR}" stroke-width="3" class="dr" style="--d:1.4s"/>`+t(220,150,"$50 mismatch found ❗",{c:CR,d:1.8})},
+ {c:"**Managerial accounting** = internal cost & profit data for managers. **Financial accounting** = public reports.",v:()=>box(15,30,135,50,"🔒 Managerial",{z:14})+t(82,110,"↓",{z:24,d:.4})+t(82,145,"👔 Managers",{d:.6})+t(82,165,"cost & profit data",{z:11,c:CM,d:.7})+box(170,30,135,50,"📢 Financial",{d:.9,z:14,f:"#fff6e6",c:CA})+t(237,110,"↓",{z:24,d:1.2})+t(237,145,"👥 The public",{d:1.4})+t(237,165,"annual reports",{z:11,c:CM,d:1.5})},
+ {c:"**Variance analysis**: planned vs actual costs. Big gap? Find out why.",v:()=>bar(80,60,60,110,"#c7d6ff",.2)+bar(185,35,60,135,CR,.7)+t(110,52,"Planned $10k",{d:.2,z:12})+t(215,27,"Actual $12k",{d:.7,z:12,c:CR})+t(160,192,"Variance: +$2k over",{c:CR,d:1.2})}]},
+{e:"🛡️",n:"Risk & Operations",c:["riskinv","psafety","lean","sixsig","captive","riskmod","compliance"],s:[
+ {c:"Step 1: **risk inventory** (list every risk). Step 2: **risk assessment** (rate each one).",v:()=>box(10,40,135,60,"1. 📋 Inventory",{z:14})+t(77,120,"LIST them",{z:12,c:CM,d:.3})+t(160,75,"→",{z:26,c:CM,d:.6})+box(175,40,135,60,"2. 📊 Assessment",{d:.8,z:14,f:"#fff6e6",c:CA})+t(242,120,"RATE them",{z:12,c:CM,d:1})+t(160,170,"3. Then avoid, reduce, or transfer",{d:1.4,c:CG})},
+ {c:"**Product safety risk**: unsafe product → injuries → lawsuit → big financial loss.",v:()=>[["🔧","Cheap part"],["🔥","Fire"],["⚖️","Lawsuit"],["💸","Loss"]].map((k,i)=>em(42+i*78,95,k[0],40,i*.5)+t(42+i*78,135,k[1],{z:12,d:i*.5,c:i==3?CR:CK})+(i<3?t(81+i*78,90,"→",{c:CM,d:i*.5+.3,z:20}):"")).join("")},
+ {c:"**Lean** cuts WASTE. **Six Sigma** cuts DEFECTS. Easy to mix up on the test.",v:()=>em(85,85,"🗑️",54)+t(85,135,"Lean",{z:17,c:C1})+t(85,158,"cut waste",{c:CM})+em(235,85,"🎯",54,.7)+t(235,135,"Six Sigma",{z:17,c:CA,d:.7})+t(235,158,"cut defects",{c:CM,d:.7})},
+ {c:"**Captive insurance**: if no outside insurer will cover a risk, the company creates its own insurer.",v:()=>em(65,105,"🏢",50)+t(65,150,"Company")+em(160,70,"🚫",30,.5)+t(160,100,"Outside insurers: no",{z:11,c:CR,d:.5})+em(255,105,"🛡️",50,1.1)+t(255,150,"Its OWN insurer",{c:CG,d:1.1})},
+ {c:"**Risk modeling**: math models that estimate how likely each risk is.",v:()=>axes()+ln("M50 168 C110 168 120 40 175 40 C230 40 240 168 300 168",C1,.3,4)+t(175,30,"Most likely",{c:C1,d:1.4,z:12})+t(285,155,"Rare",{c:CM,d:1.6,z:11,a:"end"})},
+ {c:"**Compliance**: following laws and regulations. A **compliance audit** checks that you are.",v:()=>em(160,90,"📋",60)+em(200,70,"✅",30,.6)+t(160,150,"Following the rules = less risk",{c:CG,d:.9})}]},
+{e:"🗣️",n:"People Skills",c:["lateral","assert","creative","selfc","homework","assoc"],s:[
+ {c:"**Downward** = boss → team. **Upward** = team → boss. **Lateral** = peer ↔ peer.",v:()=>box(115,12,90,36,"Boss",{f:"#f1f2f5",c:CK})+box(40,140,90,36,"You",{d:.2})+box(190,140,90,36,"Peer",{d:.2})+ln("M140 52 L95 135",CM,.5,2)+t(95,95,"↓ down",{z:11,c:CM,d:.6})+ln("M180 52 L225 135",CM,.8,2)+t(232,95,"↑ up",{z:11,c:CM,d:.9})+ln("M135 158 H185",CG,1.3,4)+t(160,195,"↔ LATERAL",{c:CG,d:1.5,z:14})},
+ {c:"**Verbal** assertiveness = SPEAKING up, like starting conversations. Posture is **nonverbal**.",v:()=>em(90,100,"🗣️",56)+t(90,148,"Verbal ✅",{c:CG})+t(90,166,"speaking",{c:CM,z:12})+em(230,100,"🧍",56,.6)+t(230,148,"Nonverbal",{d:.6})+t(230,166,"posture",{c:CM,z:12,d:.6})},
+ {c:"**Creative** = inventive, imaginative, and improves old ways of doing things.",v:()=>em(160,110,"💡",72,0,"pl")+t(160,170,"Inventive · Imaginative · Improves",{d:.6,c:C1})},
+ {c:"A **positive self-concept** leads to achievement. **Conceit** is the bad version.",v:()=>t(160,60,"😊 Confidence → 🏆 Achievement",{z:16,c:CG})+t(160,130,"😤 Conceit → ❌",{z:16,c:CR,d:.8})},
+ {c:"Persuasion tip: **do your homework** so you have proof ready for every question.",v:()=>em(90,105,"📚",56)+t(160,105,"→",{z:28,c:CM,d:.5})+em(235,105,"✅",56,.8)+t(160,170,"Research → proof → persuade",{d:1.1,c:C1})},
+ {c:"**Professional associations** = networking groups in your field. Credit unions are banks.",v:()=>[[90,60],[230,60],[90,150],[230,150]].map((p,i)=>ln(`M160 105 L${p[0]} ${p[1]}`,"#c7d6ff",.2+i*.15,2)+em(p[0],p[1]+10,"🧑‍💼",28,.4+i*.15)).join("")+em(160,118,"🤝",40,.1)}]},
+{e:"🧾",n:"Insurance, Taxes & Credit",c:["whole","term","marital","charity","credit","finsvc","captive"],s:[
+ {c:"**Term life** = death benefit only. **Whole (ordinary) life** = death benefit + savings that grows.",v:()=>bar(70,90,60,80,"#c7d6ff",.2)+t(100,82,"Death $",{z:11,d:.2})+t(100,190,"Term",{z:14})+bar(195,90,60,80,"#c7d6ff",.7)+bar(195,40,60,50,CG,1.2)+t(225,32,"+ Savings 📈",{z:11,c:CG,d:1.2})+t(225,190,"Whole life",{z:14})},
+ {c:"**Marital deduction**: whatever is left to a surviving spouse skips estate tax.",v:()=>em(75,105,"🏠💰",36)+t(160,105,"→",{z:28,c:CM,d:.5})+em(245,105,"💍",50,.8)+t(245,150,"Spouse",{d:.8})+t(160,185,"Estate tax: $0",{c:CG,d:1.2,z:16})},
+ {c:"**Charitable donations** are tax-deductible gifts.",v:()=>em(160,100,"🎁",64)+t(160,160,"Tax-deductible ✅",{c:CG,d:.6,z:16})},
+ {c:"**Credit policy**: the company's rules for deciding who gets credit. Use it when reviewing a credit report.",v:()=>em(55,105,"📄",44)+t(55,145,"Credit report",{z:11})+t(115,100,"→",{z:22,c:CM,d:.4})+em(165,105,"📋",44,.6)+t(165,145,"Credit policy",{z:11,c:C1,d:.6})+t(215,100,"→",{z:22,c:CM,d:1})+em(270,90,"✅",28,1.2)+em(270,130,"❌",28,1.3)},
+ {c:"Finance pros give clients what they **can't obtain by themselves**: expertise and access.",v:()=>em(85,105,"🧑‍💼",56)+t(160,90,"expertise →",{d:.5})+t(160,115,"access →",{d:.8})+em(240,105,"🧑",56,1.1)+t(240,150,"Client",{d:1.1})}]}
+];
+
+/* ========== LESSON GRID ========== */
+function drawLessons(){
+  $("#lessons").innerHTML=L.map((l,i)=>`<div class="les" data-i="${i}">${doneL[i]?'<span class="ck">✓</span>':""}<span class="e">${l.e}</span><b>${l.n}</b><span>${l.s.length} scenes${l.s.some(s=>s.lab)?" · 🎛️":""}</span></div>`).join("");
+  document.querySelectorAll(".les").forEach(d=>d.onclick=()=>openL(+d.dataset.i));
+}
+
+/* ========== PLAYER ========== */
+const DUR=7500;let PL=null,si=0,tStart=0,elapsed=0,paused=false,raf=0;
+function openL(i){PL=i;si=0;$("#player").classList.add("on");$("#ptitle").textContent=L[i].e+" "+L[i].n;$("#psegs").innerHTML=L[i].s.map(()=>"<div><i></i></div>").join("")+"<div><i></i></div>";showS()}
+function closeL(){cancelAnimationFrame(raf);$("#player").classList.remove("on");PL=null}
+function showS(){
+  cancelAnimationFrame(raf);
+  const l=L[PL],segs=document.querySelectorAll("#psegs i");
+  segs.forEach((s,k)=>s.style.width=k<si?"100%":"0");
+  if(si>=l.s.length){ // end card
+    doneL[PL]=1;S.set("lessons",doneL);drawLessons();segs.forEach(x=>x.style.width="100%");$("#ppause").style.visibility="hidden";
+    $("#pstage").innerHTML=`<div class="lab done"><div class="big">✓</div><p class="q" style="margin:10px 0 4px">Lesson done</p><p class="note">Now lock it in. ${l.c.length} concepts, asked different ways.</p><div class="row"><button class="btn" id="qme">Quiz me on this →</button></div></div>`;
+    $("#pcap").innerHTML="";$("#pnext").textContent="Close";
+    $("#qme").onclick=()=>{closeL();go("quiz");startQuiz(l.c,l.n)};
+    return;
+  }
+  const s=l.s[si];$("#pnext").textContent="Next →";$("#ppause").style.visibility="";
+  $("#pcap").innerHTML=md(s.c);$("#pcap").style.animation="none";void $("#pcap").offsetWidth;$("#pcap").style.animation="";
+  if(s.lab){$("#pstage").innerHTML=`<div class="lab">${LAB[s.lab].h}</div>`;LAB[s.lab].init();segs[si].style.width="100%";return}
+  $("#pstage").innerHTML=svg(s.v())+'<div class="tapL"></div><div class="tapR"></div>';
+  $(".tapL").onclick=()=>step(-1);$(".tapR").onclick=()=>step(1);
+  elapsed=0;tStart=performance.now();
+  const tick=now=>{if(!paused){const p=Math.min(1,(elapsed+now-tStart)/DUR);segs[si].style.width=p*100+"%";if(p>=1){step(1);return}}raf=requestAnimationFrame(tick)};
+  raf=requestAnimationFrame(tick);
+}
+function step(d){if(PL===null)return;const n=si+d;if(n<0)return;if(n>L[PL].s.length){closeL();return}si=n;paused=false;$("#ppause").textContent="⏸ Pause";showS()}
+$("#pnext").onclick=()=>step(1);$("#pprev").onclick=()=>step(-1);$("#pclose").onclick=closeL;
+$("#ppause").onclick=()=>{paused=!paused;const now=performance.now();if(paused)elapsed+=now-tStart;else tStart=now;$("#ppause").textContent=paused?"▶ Play":"⏸ Pause"};
+document.addEventListener("keydown",e=>{if(PL===null)return;if(e.target.tagName==="INPUT")return;if(e.key==="ArrowRight")step(1);if(e.key==="ArrowLeft")step(-1);if(e.key==="Escape")closeL();if(e.key===" "){e.preventDefault();$("#ppause").click()}});
+
+/* ========== LABS ========== */
+const money=v=>"$"+v.toLocaleString(undefined,{maximumFractionDigits:0});
+const LAB={
+demand:{h:`<div class="lrow"><span>Price</span><b id="dpv">$5</b></div><input type="range" id="dp" min="1" max="10" value="5"><svg viewBox="0 0 320 180" id="dsvg"></svg><div class="out"><span>Buyers</span><b id="dq"></b></div>`,
+ init(){const r=()=>{const p=+$("#dp").value,x=60+(10-p)/9*230,y=25+(10-p)/9*125,q=(11-p)*12;$("#dpv").textContent="$"+p;$("#dq").textContent=q+" people";
+  $("#dsvg").innerHTML=`<path d="M45 10 V160 H305" fill="none" stroke="#c3c8d2" stroke-width="2"/><path d="M60 25 L290 150" stroke="${C1}" stroke-width="4" stroke-linecap="round"/><line x1="45" y1="${y}" x2="${x}" y2="${y}" stroke="${CA}" stroke-dasharray="4 3"/><line x1="${x}" y1="${y}" x2="${x}" y2="160" stroke="${CA}" stroke-dasharray="4 3"/><circle cx="${x}" cy="${y}" r="9" fill="${CA}" style="transition:.2s"/><text x="50" y="175" font-size="11" fill="${CM}">Quantity →</text><text x="50" y="8" font-size="11" fill="${CM}">Price ↑</text>`};$("#dp").oninput=r;r()}},
+tvm:{h:`<div class="lrow"><span>Invest</span><b id="tav"></b></div><input type="range" id="ta" min="100" max="10000" step="100" value="1200"><div class="lrow"><span>Rate</span><b id="trv"></b></div><input type="range" id="tr" min="1" max="15" value="10"><div class="lrow"><span>Years</span><b id="tnv"></b></div><input type="range" id="tn" min="1" max="10" value="5"><svg viewBox="0 0 320 150" id="tsvg"></svg><div class="out"><span>Future value</span><b id="tfv"></b></div>`,
+ init(){const r=()=>{const a=+$("#ta").value,rt=+$("#tr").value/100,n=+$("#tn").value;$("#tav").textContent=money(a);$("#trv").textContent=(rt*100)+"%";$("#tnv").textContent=n;
+  const vals=[...Array(n+1)].map((_,i)=>a*Math.pow(1+rt,i)),mx=vals[n],w=Math.min(36,280/(n+1)-6);
+  $("#tsvg").innerHTML=vals.map((v,i)=>{const h=v/mx*115,x=20+i*(280/(n+1));return`<rect x="${x}" y="${135-h}" width="${w}" height="${h}" rx="4" fill="${i?C1:"#c7d6ff"}" style="transition:.3s"/><text x="${x+w/2}" y="148" font-size="9" text-anchor="middle" fill="${CM}">Y${i}</text>`}).join("");
+  $("#tfv").textContent=money(mx)+"  (+"+money(mx-a)+" interest)"};["ta","tr","tn"].forEach(k=>$("#"+k).oninput=r);r()}},
+cost:{h:`<div class="lrow"><span>Units made</span><b id="cuv"></b></div><input type="range" id="cu" min="0" max="100" value="20"><svg viewBox="0 0 320 160" id="csvg"></svg><div class="out"><span>Total cost (rent $500 + $8/unit)</span><b id="ctot"></b></div>`,
+ init(){const r=()=>{const u=+$("#cu").value,f=500,v=8*u,mx=1300,h=x=>x/mx*120;$("#cuv").textContent=u;
+  const b=(x,val,c,l)=>`<rect x="${x}" y="${135-h(val)}" width="60" height="${h(val)}" rx="5" fill="${c}" style="transition:.25s"/><text x="${x+30}" y="${128-h(val)}" font-size="12" font-weight="700" text-anchor="middle">${money(val)}</text><text x="${x+30}" y="153" font-size="11" text-anchor="middle" fill="${CM}">${l}</text>`;
+  $("#csvg").innerHTML=b(25,f,CA,"Fixed")+b(130,v,C1,"Variable")+b(235,f+v,CK,"Total");$("#ctot").textContent=money(f+v)};$("#cu").oninput=r;r()}}
+};
+
+/* ========== QUIZ ENGINE ========== */
+const FMT={scen:"Scenario",t2d:"Definition",d2t:"Name it",tf:"True / False"};
+function distract(c,n,key){const pool=shuf(CON.filter(x=>x.id!==c.id&&(!c.g||x.g!==c.g)));const same=pool.filter(x=>x.area===c.area),rest=pool.filter(x=>x.area!==c.area);return [...same,...rest].slice(0,n).map(x=>x[key])}
+function makeQ(c,force){
+  let f=force||(c.s.length?pick(["scen","scen","t2d","d2t","tf"]):pick(["t2d","d2t","tf"]));
+  if(f==="scen"){const v=pick(c.s);return{f,q:v[0],ans:v[1],opts:shuf(v.slice(1)),why:c.why,c}}
+  if(f==="t2d"){const q=pick([`What does “${c.t}” mean?`,`Best definition of “${c.t}”:`,`“${c.t}” is…`]);return{f,q,ans:c.d,opts:shuf([c.d,...distract(c,3,"d")]),why:c.why,c}}
+  if(f==="d2t"){const q=pick([`Which term matches: “${c.d}”?`,`Name the concept: ${c.d}.`,`This describes which term? “${c.d}”`]);return{f,q,ans:c.t,opts:shuf([c.t,...distract(c,3,"t")]),why:c.why,c}}
+  const truth=Math.random()<.5,shown=truth?c.d:distract(c,1,"d")[0];
+  return{f:"tf",q:`True or false: <br><b>${c.t}</b> = ${shown.charAt(0).toLowerCase()+shown.slice(1)}.`,ans:truth?"True":"False",opts:["True","False"],why:truth?c.why:`False. “${c.t}” = ${c.d}.`,c};
+}
+let deck=[],qi=0,right=0,mode="smart",scope=null,scopeName="";
+function buildDeck(n=12){
+  let pool=scope?CON.filter(c=>scope.includes(c.id)):CON;
+  if(mode==="weak"){const w=pool.filter(c=>(M[c.id]||0)<2);pool=w.length?w:pool}
+  // weighted: unmastered x3, prefer the 41 missed (have scenarios) x2
+  const bag=[];pool.forEach(c=>{const wgt=((M[c.id]||0)<2?3:1)*(c.s.length?2:1);for(let i=0;i<wgt;i++)bag.push(c)});
+  const out=[];let last=null,guard=0;
+  while(out.length<n&&guard++<500){const c=pick(bag);if(c===last&&pool.length>1)continue;out.push(makeQ(c,mode==="tf"?"tf":null));last=c}
+  return out;
+}
+function startQuiz(sc=null,name=""){scope=sc;scopeName=name;deck=buildDeck(scope?Math.max(8,scope.length*2):12);qi=0;right=0;showQ()}
+function showQ(){
+  $("#qbar").style.width=(qi/deck.length*100)+"%";
+  const card=$("#qcard");
+  if(qi>=deck.length){const p=Math.round(right/deck.length*100);
+    card.innerHTML=`<div class="done"><div class="big">${p}%</div><p class="note">${right} of ${deck.length} correct${scopeName?" · "+scopeName:""}</p><div class="row"><button class="btn" id="again">New round (re-shuffled)</button></div>${scope?'<div class="row"><button class="btn ghost" id="allq">Quiz everything</button></div>':""}</div>`;
+    $("#again").onclick=()=>startQuiz(scope,scopeName);if(scope)$("#allq").onclick=()=>startQuiz();return}
+  const q=deck[qi];
+  card.innerHTML=`<span class="tag">${q.c.area}</span><span class="tag f">${FMT[q.f]}</span>${scopeName?`<span class="tag" style="background:#f1f2f5;color:${CM}">${scopeName}</span>`:""}<p class="q">${q.q}</p>`+q.opts.map(o=>`<button class="opt">${o}</button>`).join("")+`<div class="why">${q.why}</div><div class="row" style="display:none"><button class="btn" id="nx">Next →</button></div>`;
+  card.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const ok=b.textContent===q.ans;
+    card.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.textContent===q.ans)x.classList.add("good")});
+    if(ok){right++;M[q.c.id]=(M[q.c.id]||0)+1}else{b.classList.add("bad");M[q.c.id]=0}
+    S.set("mastery",M);pill();
+    card.querySelector(".why").classList.add("on");card.querySelector(".row").style.display="flex";
+    $("#nx").onclick=()=>{qi++;showQ()};$("#nx").focus();
+  });
+}
+document.querySelectorAll("#qmode button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#qmode button").forEach(x=>x.classList.toggle("on",x===b));mode=b.dataset.m;startQuiz()});
+
+/* ========== CARDS ========== */
+const areas=["All",...new Set(CON.map(c=>c.area))];let carea="All",cdeck=[],ci=0;
+$("#cmode").innerHTML=areas.map((a,i)=>`<button class="${i?"":"on"}" data-a="${a}">${a}</button>`).join("");
+document.querySelectorAll("#cmode button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#cmode button").forEach(x=>x.classList.toggle("on",x===b));carea=b.dataset.a;loadC(false)});
+function loadC(sh){cdeck=CON.filter(c=>carea==="All"||c.area===carea);if(sh)cdeck=shuf(cdeck);ci=0;showC()}
+function showC(){const f=$("#flip"),was=f.classList.contains("on");f.classList.remove("on");setTimeout(()=>{const c=cdeck[ci];$("#cterm").textContent=c.t;$("#cdef").textContent=c.d;$("#ccount").textContent=(ci+1)+" / "+cdeck.length+((M[c.id]||0)>=2?" · mastered ✓":"")},was?250:0)}
+$("#flip").onclick=()=>$("#flip").classList.toggle("on");
+$("#cnext").onclick=()=>{ci=(ci+1)%cdeck.length;showC()};
+$("#cprev").onclick=()=>{ci=(ci-1+cdeck.length)%cdeck.length;showC()};
+$("#cshuf").onclick=()=>loadC(true);
+
+/* ========== CALCULATOR ========== */
+const KEYS=["C","(",")","⌫","7","8","9","÷","4","5","6","×","1","2","3","−","0",".","^","+","%","="];
+let ex="",hist=[];
+$("#keys").innerHTML=KEYS.map(k=>`<button class="${"÷×−+^".includes(k)?"op":"C()⌫%".includes(k)?"fn":k==="="?"eq":""}" data-k="${k}">${k}</button>`).join("");
+function evalEx(s){const js=s.replace(/×/g,"*").replace(/÷/g,"/").replace(/−/g,"-").replace(/\^/g,"**").replace(/%/g,"/100");if(!/^[0-9+\-*/().\s]*$/.test(js)||!js.trim())return null;try{const v=Function('"use strict";return ('+js+")")();return isFinite(v)?v:null}catch(e){return null}}
+const fmtN=v=>Number.isInteger(v)?v.toLocaleString():(+v.toFixed(8)).toLocaleString(undefined,{maximumFractionDigits:8});
+function press(k){
+  if(k==="C")ex="";else if(k==="⌫")ex=ex.slice(0,-1);
+  else if(k==="="){const v=evalEx(ex);if(v!==null){hist.unshift(ex+" = "+fmtN(v));hist=hist.slice(0,3);ex=String(+v.toFixed(10))}else{$("#crs").textContent="Error";return}}
+  else ex+=k;
+  $("#cex").textContent=ex;const v=evalEx(ex);$("#crs").textContent=ex?(v===null?"…":fmtN(v)):"0";$("#chist").innerHTML=hist.join("<br>");
+}
+$("#keys").onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(k)press(k)};
+document.addEventListener("keydown",e=>{if(!$("#v-calc").classList.contains("on")||PL!==null)return;const m={"*":"×","/":"÷","-":"−","Enter":"=","Backspace":"⌫","Escape":"C"};let k=m[e.key]||e.key;if(KEYS.includes(k)){e.preventDefault();press(k)}});
+
+/* ========== INIT ========== */
+pill();drawLessons();startQuiz();loadC(false);press("C");
+</script>
+</body>
+</html>
