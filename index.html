@@ -121,7 +121,7 @@ nav button{font-size:13px}
 <div class="wrap">
   <header>
     <div><h1>DECA Finance Review</h1><div class="sub">Practice 59/100 → goal 75+</div></div>
-    <div class="pill" id="pill"></div>
+    <div style="display:flex;gap:6px;align-items:center"><div class="pill" id="pill"></div><button class="x" id="syncb" title="Sync progress">⇅</button></div>
   </header>
 
   <section class="view on" id="v-learn">
@@ -174,6 +174,16 @@ nav button{font-size:13px}
   </section>
 </div>
 
+<div id="syncm" style="display:none;position:fixed;inset:0;background:rgba(20,24,32,.35);z-index:30;align-items:center;justify-content:center;padding:16px">
+ <div class="card" style="max-width:440px;width:100%">
+  <h2 style="margin-top:0">Sync progress</h2>
+  <p class="note" style="margin:0 0 8px">1. On the device WITH your progress: tap Copy.<br>2. On the other device: paste it below, tap Import. Progress merges (keeps the best of both).</p>
+  <textarea id="synct" style="width:100%;height:90px;border:1.5px solid var(--line);border-radius:12px;padding:10px;font-size:12px;font-family:monospace"></textarea>
+  <div class="row"><button class="btn ghost" id="syncc">Copy my code</button><button class="btn" id="synci">Import</button></div>
+  <div class="row"><button class="btn ghost" id="syncx">Close</button></div>
+  <p class="note" id="syncmsg"></p>
+ </div>
+</div>
 <div id="player">
   <div class="segs" id="psegs"></div>
   <div class="ptop"><b id="ptitle"></b><button class="x" id="pclose">✕</button></div>
@@ -730,6 +740,15 @@ function endT(){
 }
 $("#tquit").onclick=()=>{$("#trun").style.display="none";$("#tlist").style.display="block";drawTests()};
 drawTests();
+
+/* ========== SYNC ========== */
+const code=()=>btoa(unescape(encodeURIComponent(JSON.stringify({m:M,l:doneL,t:TB}))));
+$("#syncb").onclick=()=>{$("#synct").value=code();$("#syncmsg").textContent="";$("#syncm").style.display="flex"};
+$("#syncx").onclick=()=>$("#syncm").style.display="none";
+$("#syncc").onclick=async()=>{$("#synct").value=code();$("#synct").select();try{await navigator.clipboard.writeText($("#synct").value);$("#syncmsg").textContent="✓ Copied. Paste it on your other device."}catch(e){$("#syncmsg").textContent="Selected. Copy it manually (Cmd+C / long-press)."}};
+$("#synci").onclick=()=>{try{const d=JSON.parse(decodeURIComponent(escape(atob($("#synct").value.trim()))));
+ Object.entries(d.m||{}).forEach(([k,v])=>M[k]=Math.max(M[k]||0,v));Object.keys(d.l||{}).forEach(k=>doneL[k]=1);Object.entries(d.t||{}).forEach(([k,v])=>TB[k]=Math.max(TB[k]??0,v));
+ S.set("mastery",M);S.set("lessons",doneL);S.set("testBest",TB);pill();drawLessons();drawTests();$("#syncmsg").textContent="✓ Imported: "+mastered()+"/"+CON.length+" mastered."}catch(e){$("#syncmsg").textContent="That code didn't work. Copy the whole thing and try again."}};
 
 /* ========== INIT ========== */
 pill();drawLessons();startQuiz();loadC(false);press("C");
