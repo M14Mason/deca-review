@@ -97,6 +97,12 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:4px 0 10px}
 .term{font-size:24px;font-weight:700;letter-spacing:-.3px}
 .def{font-size:17px;line-height:1.5}
 .hint{color:var(--mute);font-size:12px;margin-top:10px}
+.fb{margin-top:8px;padding:14px;border-radius:14px;background:#fff8f8;border:1px solid #f6d5d6;animation:in .35s}
+.fbx{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:14px;font-weight:600}
+.you{color:var(--bad)}.okk{color:var(--good)}
+.fb svg{width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+.fb p{font-size:14px;line-height:1.5}
+nav button{font-size:13px}
 /* calc */
 .calc{max-width:380px;margin:0 auto}
 .disp{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;text-align:right;margin-bottom:12px;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
@@ -122,6 +128,19 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:4px 0 10px}
     <h2>Watch a lesson, then get quizzed on it</h2>
     <div class="lessons" id="lessons"></div>
     <p class="note">Tap the right side of a lesson to skip ahead, the left side to go back. Lessons with a 🎛️ end with a hands-on lab.</p>
+  </section>
+
+  <section class="view" id="v-tests">
+    <div id="tlist">
+      <h2>Practice tests</h2>
+      <div class="lessons" id="tests"></div>
+      <p class="note">Mixed formats, hard distractors. Miss one and you get a visual fix, then it comes back reworded a few questions later (spaced retrieval). Score = first-try %.</p>
+    </div>
+    <div id="trun" style="display:none">
+      <div class="row" style="margin:0 0 10px;align-items:center"><span class="sub" id="tinfo" style="flex:1"></span><button class="x" id="tquit" title="Quit">✕</button></div>
+      <div class="bar"><i id="tbar"></i></div>
+      <div class="card" id="tcard"></div>
+    </div>
   </section>
 
   <section class="view" id="v-quiz">
@@ -165,6 +184,7 @@ input[type=range]{width:100%;accent-color:var(--acc);margin:4px 0 10px}
 
 <nav>
   <button data-v="learn" class="on">Learn</button>
+  <button data-v="tests">Tests</button>
   <button data-v="quiz">Quiz</button>
   <button data-v="cards">Cards</button>
   <button data-v="calc">Calc</button>
@@ -425,7 +445,7 @@ const L=[
 /* ========== LESSON GRID ========== */
 function drawLessons(){
   $("#lessons").innerHTML=L.map((l,i)=>`<div class="les" data-i="${i}">${doneL[i]?'<span class="ck">✓</span>':""}<span class="e">${l.e}</span><b>${l.n}</b><span>${l.s.length} scenes${l.s.some(s=>s.lab)?" · 🎛️":""}</span></div>`).join("");
-  document.querySelectorAll(".les").forEach(d=>d.onclick=()=>openL(+d.dataset.i));
+  document.querySelectorAll("#lessons .les").forEach(d=>d.onclick=()=>openL(+d.dataset.i));
 }
 
 /* ========== PLAYER ========== */
@@ -540,6 +560,176 @@ function press(k){
 }
 $("#keys").onclick=e=>{const k=e.target.dataset&&e.target.dataset.k;if(k)press(k)};
 document.addEventListener("keydown",e=>{if(!$("#v-calc").classList.contains("on")||PL!==null)return;const m={"*":"×","/":"÷","-":"−","Enter":"=","Backspace":"⌫","Escape":"C"};let k=m[e.key]||e.key;if(KEYS.includes(k)){e.preventDefault();press(k)}});
+
+/* ========== PRACTICE TESTS ==========
+ Item: [format, visual, explanation, variant1, variant2]
+ Variant: [question, correct, wrong, wrong, wrong]  |  [question] = reuse variant1's options  |  [statement,"True"/"False"] = T/F
+ Visual: "lesson.scene" reuses a lesson animation, or a VZ key, or null. */
+const VZ={
+si:()=>t(15,20,"Simple vs compound, $1,000 @ 10%",{c:CM,z:12,a:"start"})+t(15,40,"■ simple",{z:10,c:"#8aa4e8",a:"start",d:1.2})+t(15,55,"■ compound",{z:10,c:C1,a:"start",d:1.2})+[1,2,3].map(i=>{const s=1000+100*i,c=Math.round(1000*1.1**i),hs=s/1331*110,hc=c/1331*110,x=60+(i-1)*85;return bar(x,170-hs,30,hs,"#c7d6ff",i*.3)+bar(x+34,170-hc,30,hc,C1,i*.3+.15)+t(x+15,164-hs,"$"+s,{z:9,d:i*.3})+t(x+49,164-hc,"$"+c,{z:9,c:C1,d:i*.3+.15})+t(x+32,188,"Year "+i,{z:11,c:CM})}).join(""),
+be:()=>axes()+ln("M45 120 H305",CA,.2,3)+ln("M45 120 L305 50",CR,.6,3)+ln("M45 170 L305 30",CG,1,3)+t(300,115,"Fixed",{z:11,c:CA,a:"end",d:.4})+t(250,62,"Total cost",{z:11,c:CR,a:"end",d:.8})+t(300,24,"Revenue",{z:11,c:CG,a:"end",d:1.2})+`<circle cx="231" cy="70" r="8" fill="${C1}" class="pl" style="--d:1.6s"/>`+t(205,92,"Break-even",{z:12,c:C1,d:1.8,a:"end"})+t(175,195,"Units = Fixed ÷ (Price − Variable)",{z:11,c:C1,d:2}),
+roi:()=>bar(70,80,60,90,"#c7d6ff",.2)+t(100,72,"$40 cost",{d:.2})+bar(190,53,60,117,CG,.6)+t(220,45,"$52 now",{d:.6,c:CG})+t(160,110,"+$12",{z:16,c:CG,d:1})+t(160,192,"ROI = gain ÷ COST = 12 ÷ 40 = 30%",{c:C1,d:1.4,z:12}),
+cr:()=>bar(70,50,60,120,C1,.2)+t(100,42,"Current assets $150k",{z:11,d:.2})+bar(190,90,60,80,CR,.6)+t(220,82,"Current liab. $100k",{z:11,d:.6})+t(160,192,"150 ÷ 100 = 1.5 ✅  (below 1 = ⚠️)",{c:C1,d:1.1,z:12}),
+pm:()=>bar(30,40,60,130,"#c7d6ff",.1)+t(60,32,"Revenue $400k",{z:10,d:.1})+bar(130,118,60,52,C1,.5)+t(160,110,"Gross $160k",{z:10,d:.5})+bar(230,150,60,20,CG,.9)+t(260,142,"Net $60k",{z:10,d:.9})+t(160,20,"Gross margin 160÷400 = 40%",{z:12,c:C1,d:1.3})+t(160,192,"Net margin 60÷400 = 15%",{z:12,c:CG,d:1.6}),
+pe:()=>t(160,55,"Price $40",{z:20})+t(160,92,"÷ EPS $2",{z:20,d:.6})+t(160,132,"= P/E 20",{z:24,c:C1,d:1.2})+t(160,165,"EPS = net income ÷ shares",{z:11,c:CM,d:1.5})+t(160,185,"Investors pay $20 per $1 of earnings",{z:11,c:CM,d:1.8}),
+r72:()=>t(160,35,"72 ÷ rate = years to double",{z:16,c:C1})+ln("M40 105 H280",CM,.3,2)+em(40,98,"💵",30,.2)+em(280,98,"💵💵",30,1.2)+t(160,145,"72 ÷ 8% = 9 years",{z:15,d:1})+t(160,172,"72 ÷ 6% = 12 years",{z:13,c:CM,d:1.4}),
+roe:()=>bar(70,50,60,120,C1,.2)+t(100,42,"Equity $600k",{z:11,d:.2})+bar(190,152,60,18,CG,.6)+t(220,144,"Net income $90k",{z:11,d:.6,c:CG})+t(160,192,"ROE = 90 ÷ 600 = 15%",{c:C1,d:1.1,z:13})
+};
+const TF_="True or false: ";
+const TESTS=[
+{n:"Test 1",items:[
+["CALC","1.3","PV = FV ÷ (1+r)ⁿ. Divide by the growth for ALL the years. Dividing once or multiplying are the traps.",["You need $5,000 in 4 years. Your account earns 5% compounded annually. How much do you deposit today?","$4,113.51","$4,000.00","$4,761.90","$6,077.53"],["A college fund must reach $10,000 in 3 years at 6% compounded. Required deposit today?","$8,396.19","$8,200.00","$9,433.96","$11,910.16"]],
+["SC","3.1","D/E = debt ÷ equity. Higher = more borrowed = riskier.",["Firm A: $2M debt, $4M equity. Firm B: $3M debt, $1M equity. Which is correct?","Firm B's D/E is 3.0, so it carries more financial risk","Firm A's D/E is 2.0, so it carries more risk","Both are equally risky","Firm B is safer because it has less total capital"],["Company X: debt $900k, equity $300k. Company Y: debt $400k, equity $800k. Which is true?","X's D/E is 3.0, making it the riskier investment","Y's D/E is 2.0, making it riskier","X's D/E is 0.33, making it safer","Both carry the same risk"]],
+["TF","3.2","Only interest paid is tax-deductible. Dividends are not. That's why firms like debt.",[TF_+"Dividends paid to shareholders reduce a corporation's taxable income, just like interest does.","False"],[TF_+"Interest a corporation pays on loans reduces its taxable income, but dividends it pays do not.","True"]],
+["SC","0.0","Price up → quantity demanded down. That's the law of demand, not supply.",["A coffee shop raises lattes from $5 to $7. Weekly sales fall from 400 to 300. This illustrates:","The law of demand","The law of supply","Inflation","Price elasticity of supply"],["Gas prices spike and people drive less. Which principle explains this?","Law of demand","Law of supply","Diminishing returns","Opportunity cost"]],
+["SC","2.0","Money market = under 1 year. A 10-year note is capital market even though it's government debt.",["Which would a money market fund MOST likely hold?","90-day commercial paper from a large corporation","10-year Treasury notes","Shares of an S&P 500 index fund","Municipal bonds maturing in 2040"],["A fund promises low risk and cash within days. Its portfolio most likely holds:","Treasury bills and commercial paper","Growth stocks","15-year corporate bonds","Real estate investment trusts"]],
+["NOT","4.0","Rent, leases, and insurance stay the same no matter how much you make. Those are fixed.",["Which is NOT a variable cost for a bakery?","Monthly lease on the storefront","Flour","Packaging boxes","Hourly wages for extra holiday bakers"],["Which cost stays FIXED as a T-shirt company doubles production?","Annual insurance premium on the warehouse","Blank shirts","Ink","Shipping per order"]],
+["TF","5.1","Agents and fiduciaries must put YOUR interest first, even over their own commission.",[TF_+"An advisor acting as your agent may push a product because it pays her a bigger commission, as long as it's legal.","False"],[TF_+"A board of directors' fiduciary duty is owed to shareholders, not to the directors themselves.","True"]],
+["CALC","1.5","Real return ≈ return − inflation.",["Your savings account pays 4.5%. Inflation is 3%. Approximate real return?","1.5%","7.5%","4.5%","−1.5%"],["A bond yields 2% while inflation is 3.5%. Approximate real return?","−1.5%","5.5%","1.5%","2%"]],
+["SC","6.1","IF-THEN criteria that sort records = rule induction. Regression predicts a number.",["A bank sorts applicants using 'IF credit score under 600 THEN deny.' Which technique?","Rule induction","Regression","Clustering","Time-series forecasting"],["A store's software applies 'IF a customer spends over $500 a month THEN mark as VIP.' This is:","Rule induction","Regression","Clustering","Neural forecasting"]],
+["SC","8.0","Lateral = same level, peer to peer. Top-down memos are downward. Reports to a boss are upward.",["Which is lateral communication?","The accounting manager and marketing manager plan a joint budget","The CFO sends a memo to all accountants","An analyst emails her supervisor a weekly report","HR announces a policy to every department"],["Two cashiers on the same shift agree to swap lunch breaks. Communication type?","Lateral","Downward","Upward","Diagonal"]],
+["SC","2.2","Banking + insurance + investing blending into one firm or system = convergence.",["A bank buys an insurer and a brokerage, then runs all three on one platform. This trend is:","Convergence","Disintermediation","Securitization","Deregulation"],["One app lets you bank, buy insurance, and trade stocks with one company. This describes:","Convergence","Disintermediation","Securitization","Protectionism"]],
+["TF","4.1","Sunk costs are gone either way. Ignore them when deciding what to do next.",[TF_+"A company spent $50,000 on a failed ad campaign, so it should keep running ads to 'get its money back.'","False"],[TF_+"Money already spent and unrecoverable should be ignored when making future decisions.","True"]],
+["SC","7.0","Step 1 is listing the risks (inventory). Rating them comes after (assessment).",["Before rating anything, a team lists every major threat the company faces. This first step creates a:","Risk inventory","Risk assessment","Risk appetite statement","Risk transfer agreement"],["A team scores each listed risk by likelihood and impact. What did they build right BEFORE this?","A risk inventory","An insurance policy","A risk transfer","A compliance audit"]],
+["CALC","1.2","FV = PV × (1+r)ⁿ. Compound means interest earns interest, so it beats simple interest.",["You invest $2,000 at 8% compounded annually for 2 years. Ending value?","$2,332.80","$2,320.00","$2,160.00","$1,714.68"],["$500 grows at 10% compounded for 3 years. Ending value?","$665.50","$650.00","$550.00","$375.66"]],
+["SC","3.3","Net income − dividends = added to retained earnings (equity, not a liability).",["A company earned $1M and paid $300k in dividends. What happens to the other $700k?","It's added to retained earnings","It's recorded as a liability","It becomes treasury stock","It's added to outstanding shares"],["Which balance sheet item grows when a profitable company pays NO dividends?","Retained earnings","Accounts payable","Common stock par value","Long-term debt"]]
+]},
+{n:"Test 2",items:[
+["CALC","si","Simple interest = Principal × rate × time. No interest on interest.",["You borrow $3,000 at 6% SIMPLE interest for 2 years. Total interest?","$360","$370.80","$180","$3,360"],["$1,500 at 4% SIMPLE interest for 3 years earns how much interest?","$180","$187.30","$60","$1,680"]],
+["CALC","be","Break-even units = Fixed ÷ (Price − Variable). Subtract variable cost first.",["Fixed costs $12,000. Price $50/unit. Variable cost $20/unit. Break-even units?","400","240","600","171"],["A food truck has $9,000 fixed costs, sells tacos at $6, and each costs $3 to make. Break-even tacos?","3,000","1,500","1,000","4,500"]],
+["TF","0.3","Non-cyclical stocks (utilities, groceries, healthcare) stay steady. Cyclical ones like airlines get hit harder in recessions.",[TF_+"During a recession, a utility company's stock usually falls more sharply than an airline's.","False"],[TF_+"Grocery and healthcare stocks tend to hold steady across expansions and recessions.","True"]],
+["SC","2.5","Home bias comes from seeing foreign markets as riskier and less familiar.",["An investor owns only U.S. stocks because foreign markets are 'too risky.' Her portfolio shows:","Home bias","Diversification","Currency hedging","Strategic asset allocation"],["Why might a Japanese investor overweight Japanese stocks?","Foreign markets seem riskier and less familiar","Foreign stocks always underperform","Japanese law requires it","Foreign stocks pay no dividends"]],
+["NOT","5.2","A salesperson works for the seller, not you. Attorneys, boards, and trustees are fiduciaries.",["Who does NOT typically owe you a fiduciary duty?","A car salesperson negotiating your purchase","Your attorney","A board of directors, toward shareholders","A trustee managing your trust"],["Who is LEAST likely to be your fiduciary?","A store clerk selling you a laptop","Your financial planner","Your agent under power of attorney","Your estate's executor"]],
+["SC","0.5","Tariffs and quotas on imports = protectionism, used to protect home industry and avoid trade deficits.",["A country taxes imported cars 25% so local automakers can compete. This policy is:","Protectionism","Free trade","Globalization","Dumping"],["Quotas that limit foreign steel imports are mainly meant to:","Protect domestic producers and avoid a trade deficit","Lower prices for consumers","Increase imports","Help foreign competitors"]],
+["SC","9.0","Whole/ordinary life = death benefit + cash value. Term = death benefit only, for a set period.",["A 30-year-old wants life insurance that also builds a savings value she can borrow against. Best fit?","Whole life","Term life","Liability insurance","Disability insurance"],["Which policy pays a death benefit only within a set period and builds NO cash value?","Term life","Whole life","Ordinary life","Universal life"]],
+["CALC","3.1","D/E = liabilities ÷ equity. Don't flip it.",["Total liabilities $600,000. Shareholders' equity $400,000. D/E ratio?","1.5","0.67","0.4","2.5"],["Debt $250k, equity $500k. D/E ratio?","0.5","2.0","0.33","1.5"]],
+["TF","7.2","Lean = cut WASTE. Six Sigma = cut DEFECTS. The statement flips them.",[TF_+"Six Sigma's main goal is eliminating waste, while Lean focuses on reducing defects.","False"],[TF_+"Lean targets waste; Six Sigma targets defects and variation.","True"]],
+["SC","6.3","Tracing transactions step by step to find mismatches = audit trail.",["An auditor follows a $2,000 payment from invoice to bank statement to find where numbers stopped matching. She's using:","An audit trail","Variance analysis","Regression","A risk inventory"],["The purpose of an audit trail in financial-info management is to:","Identify data inconsistencies","Forecast revenue","Analyze customer preferences","Set budgets"]],
+["SC","0.6","Marginal analysis: only do it if extra benefit > extra cost. Positive revenue alone isn't enough.",["A factory could add a night shift: +$80k revenue, +$95k costs. Marginal analysis says it should:","Not add the shift","Add the shift","Add it because revenue is positive","Raise prices first"],["One more batch of cookies costs $40 to make and sells for $35. Marginal analysis says:","Don't bake it","Bake it","Bake it because sales are positive","Bake it to cover fixed costs"]],
+["SC","2.3","World Bank = long-term development loans + advice. IMF = currency and financial stability.",["A country's currency is collapsing and it needs emergency stabilization. The MAIN fit is the:","International Monetary Fund","World Bank Group","World Trade Organization","Federal Reserve"],["Which institution focuses on long-term development loans for roads, schools, and power in developing nations?","World Bank Group","International Monetary Fund","World Trade Organization","Bank for International Settlements"]],
+["TF","5.0","No exchange of value (consideration) = no binding contract. A gift promise isn't enforceable.",[TF_+"A promise to give a friend a gift, with nothing expected in return, is an enforceable contract.","False"],[TF_+"For a contract to be binding, both parties must exchange something of value.","True"]],
+["SC","4.2","Charging a cost to the department that uses it = cost allocation.",["IT buys a $12,000 software license used only by sales. The CFO charges it to the sales budget. This is:","Cost allocation","Marginal analysis","Sunk cost recovery","Variance analysis"],["Splitting a shared electricity bill among departments by square footage is:","Cost allocation","Cost-benefit analysis","Break-even analysis","Depreciation"]],
+["SC","9.3","Credit decisions follow the company's credit policy, not gut feel or sales goals.",["A customer with a 580 credit score wants a $10,000 credit line. The rep should decide based on:","The company's credit policy","How friendly the customer seems","The company's accounting method","This month's sales quota"],["A store's rule that customers need two years of payment history for credit is part of its:","Credit policy","Marketing mix","Audit trail","Mission statement"]]
+]},
+{n:"Test 3",items:[
+["CALC","roi","ROI = (gain) ÷ ORIGINAL cost. Dividing by the new value is the trap.",["You buy a stock at $40 and sell at $52. ROI?","30%","23%","12%","130%"],["A $2,000 investment is now worth $2,500. ROI?","25%","20%","50%","125%"]],
+["CALC","cr","Current ratio = current assets ÷ current liabilities. Under 1 = may struggle with short-term bills.",["Current assets $150,000. Current liabilities $100,000. Current ratio?","1.5","0.67","2.5","50,000"],["A firm has $80k current assets and $160k current liabilities. Ratio and meaning?","0.5, it may struggle to pay short-term bills","2.0, it's very liquid","0.5, it's very liquid","2.0, it may struggle to pay bills"]],
+["TF","0.4","More unemployment = less spending = output falls.",[TF_+"When unemployment rises, total economic output usually increases because labor is cheaper.","False"],[TF_+"Rising unemployment usually pushes stock prices down.","True"]],
+["SC","6.4","Managerial accounting = internal numbers for managers. SEC filings and earnings releases are financial accounting.",["Which task belongs to a MANAGERIAL accountant?","Calculating cost per unit of a new product for the plant manager","Preparing the 10-K for the SEC","Releasing quarterly earnings to investors","Filing the corporate tax return"],["A managerial accountant mainly serves:","Internal decision-makers","Outside investors","Government regulators","Customers"]],
+["SC","9.1","The unlimited marital deduction: assets to a surviving spouse skip federal estate tax.",["At death, which transfer usually creates NO federal estate tax?","Everything left to a surviving spouse","A house left to adult children","A boat left to a nephew","Stocks left to a best friend"],["The rule letting unlimited assets pass to a spouse estate-tax-free is the:","Marital deduction","Charitable deduction","Annual gift exclusion","Step-up in basis"]],
+["SC","3.2","Interest is deductible, dividends aren't. Same profit, less tax for the firm paying interest.",["Two firms each earn $500k before interest and taxes. Firm A pays $100k interest; Firm B pays $100k in dividends. Which pays LESS income tax?","Firm A, because interest is deductible","Firm B, because dividends are deductible","They pay the same","Firm B, because it has no debt"],["Why does borrowing often cost a corporation less than issuing stock?","Interest payments lower taxable income","Lenders get voting rights","Debt never has to be repaid","Dividends are tax-deductible"]],
+["TF","2.4","Globalization's key result: development of previously undeveloped nations.",[TF_+"Financial globalization mainly causes the economic decline of developed nations.","False"],[TF_+"Cross-border investment can help previously undeveloped nations grow.","True"]],
+["SC","4.4","Productivity is the realistic answer. 'Eliminate every error' and absolutes are traps.",["Which is the MOST realistic way employees can help control business costs?","Organizing tasks to get more done each hour","Eliminating every possible error","Never using company supplies","Working unpaid overtime"],["A manager wants staff to cut costs. Which advice is best?","Avoid distractions and boost productivity","Guarantee zero mistakes","Stop all spending","Skip all training"]],
+["SC","8.3","Positive self-concept → achievement and learning. Arrogance and needing praise are not it.",["Which trait best signals a POSITIVE self-concept?","Setting goals and achieving them","Refusing all criticism","Bragging about past wins","Avoiding challenges to protect your image"],["Someone with a healthy self-concept usually:","Learns from mistakes and keeps achieving","Thinks they're never wrong","Needs constant praise","Avoids new tasks"]],
+["CALC","r72","Rule of 72: 72 ÷ rate = years to double.",["At 8% annual return, about how long until your money doubles?","9 years","8 years","12.5 years","16 years"],["At 6%, roughly how many years to double?","12 years","6 years","10 years","16.7 years"]],
+["SC","7.1","Unsafe product → injuries → lawsuits = product safety risk.",["A cosmetics firm skips testing to save money. Customers get rashes and sue. Which risk did it ignore?","Product safety","Currency risk","Interest rate risk","Political risk"],["A recall of defective airbags leads to huge settlements. This loss came from poor management of:","Product safety risk","Market risk","Liquidity risk","Inflation risk"]],
+["SC","6.0","Info systems exist to turn data into information for decisions.",["What is the MAIN reason companies invest in information systems?","To turn data into information for decision-making","To replace all managers","To support the internal communication plan","To eliminate data entry"],["A dashboard showing daily sales by store mainly helps managers:","Make decisions","Comply with tax law","Hire faster","Write ads"]],
+["TF","4.0","Rent doesn't change with output, so it's fixed even if the landlord raises it.",[TF_+"Rent is a variable cost because it changes when the landlord raises it.","False"],[TF_+"Raw materials are a variable cost because they rise with each unit produced.","True"]],
+["SC","8.1","Verbal = speaking. Posture, eye contact, and handshakes are nonverbal.",["Which action practices VERBAL assertiveness?","Introducing yourself and starting a conversation at an event","Standing tall with shoulders back","Keeping steady eye contact","Giving a firm handshake"],["To build verbal assertiveness, practice:","Speaking up and starting conversations","Better posture","Smiling more","Dressing professionally"]],
+["SC",null,"No capital = figure out costs and funding (financial analysis) before anything else.",["Monte wants to open a gym but has only $2,000 saved. His FIRST priority should be:","Financial analysis of costs and funding","Designing the logo","Hiring trainers","Running Instagram ads"],["Before marketing a new business, an entrepreneur with little capital should first:","Analyze startup costs and funding sources","Build a website","Print business cards","Pick a location"]]
+]},
+{n:"Test 4",items:[
+["CALC","pm","Net margin = net income ÷ REVENUE.",["Revenue $400,000. Net income $60,000. Net profit margin?","15%","6.7%","85%","40%"],["A company earns $25k net income on $500k revenue. Net profit margin?","5%","20%","2.5%","50%"]],
+["CALC","pm","Gross margin = (revenue − COGS) ÷ REVENUE. Divide by revenue, not COGS.",["Revenue $200k. Cost of goods sold $120k. Gross profit margin?","40%","60%","1.67","80%"],["Sales $50k, COGS $35k. Gross margin?","30%","70%","15%","43%"]],
+["CALC","pe","EPS = net income ÷ shares. P/E = price ÷ EPS.",["Net income $2M. Shares outstanding 1M. Stock price $40. P/E ratio?","20","2","40","0.05"],["EPS is $5 and the stock trades at $75. P/E?","15","375","0.07","80"]],
+["TF","2.0","Stocks are capital market (long-term), even though they trade fast. T-bills are money market.",[TF_+"Corporate stock is traded in the money market because it can be sold quickly.","False"],[TF_+"Treasury bills are money market instruments because they mature in under a year.","True"]],
+["SC","8.2","Inventive + imaginative + improves old ways = creative.",["An employee turns an outdated filing process into a faster digital one nobody had thought of. She's showing:","Creativity","Independence","Loyalty","Punctuality"],["Which word BEST fits someone inventive, imaginative, and always improving old methods?","Creative","Independent","Ambitious","Diligent"]],
+["SC","5.1","An agent's duty is to the principal. Taking a side bonus that hurts the principal breaks it.",["A sports agent takes a deal slightly worse for his player because the team pays the agent a bonus. He violated his duty to:","Act in the principal's best interest","Remain neutral between parties","Advise the team of its duties","Maximize league revenue"],["The primary responsibility of an agent is to:","Act in the best interest of the principal","Tell the principal their legal duties","Earn the highest commission","Stay impartial"]],
+["TF","3.1","Higher D/E = more debt = MORE risk.",[TF_+"A higher debt-to-equity ratio means a company is generally SAFER for investors.","False"],[TF_+"Investors use D/E to gauge how much financial risk a company carries.","True"]],
+["SC","7.3","When no insurer will cover you, you create your own insurer: captive insurance.",["No insurer will cover a chemical company's spill risk. Its best option is to:","Form a captive insurance company","Ignore the risk","Raise prices","Buy term life insurance"],["Captive insurance is when a company:","Creates its own insurer to cover its risks","Buys insurance from the government","Insures its customers","Self-funds payroll"]],
+["NOT","8.0","A manager directing her team is downward, not lateral.",["Which is NOT lateral communication?","A manager giving her team new sales targets","Two engineers debugging code together","Marketing and sales leads coordinating a launch","Two nurses on the same shift swapping notes"],["A team lead emails her direct reports their new schedules. This is:","Downward communication","Lateral communication","Upward communication","Grapevine communication"]],
+["CALC","1.3","Convert the future amount to today's dollars with PV, then compare.",["At 5% interest, which is worth MORE today: $1,000 now or $1,100 in 2 years?","$1,000 now (the $1,100 is worth about $998 today)","$1,100 in 2 years","They're exactly equal","You can't compare different years"],["At 10%, which is worth more today: $500 now or $600 in 2 years?","$500 now ($600 in 2 yrs ≈ $496 today)","$600 in 2 years","They're equal","You can't tell"]],
+["SC","6.2","Predicting a dollar amount = regression. Sorting into groups = classification/rule induction.",["A bank forecasts how many DOLLARS each customer will deposit next year. Best technique?","Regression","Rule induction","Clustering","Classification"],["Which data mining method predicts a continuous number like profit?","Regression","Rule induction","Association rules","Clustering"]],
+["TF","4.0","Total fixed cost stays flat, so spreading it over more units lowers fixed cost PER unit.",[TF_+"As production increases, fixed cost PER UNIT goes down.","True"],[TF_+"Total fixed costs rise every time a company makes one more unit.","False"]],
+["SC","7.5","Checking that you follow regulations = compliance audit. Compliance builds public trust.",["A bank hires a firm to check whether it follows federal lending regulations. This is a:","Compliance audit","Profitability audit","Marketing audit","Risk inventory"],["A key benefit of compliance in the finance industry is that it:","Builds and maintains public trust","Guarantees higher profits","Eliminates all risk","Removes the need for audits"]],
+["SC","8.4","Gathering proof before persuading = do your homework.",["Before pitching an investor, Jay gathers market data and practices answers to tough questions. Which persuasion technique?","Do your homework","Be reasonable","Appeal to emotion","Build rapport"],["In persuasion, what lets you answer questions and give proof on the spot?","Doing your homework","Being reasonable","Speaking confidently","Smiling"]],
+["SC","9.4","Clients pay for expertise and access they can't get alone. Insulting or 'guaranteed' answers are traps.",["Clients pay financial professionals mostly because those pros provide:","Services clients can't obtain by themselves","Services clients can't understand","Guaranteed returns","Tax-free income"],["Why would a family hire a financial planner instead of doing it alone?","Expertise and products they can't get on their own","They can't understand money","The law requires it","Planners guarantee profits"]]
+]},
+{n:"Test 5",items:[
+["CALC","roe","ROE = net income ÷ shareholders' equity.",["Net income $90k. Shareholders' equity $600k. ROE?","15%","6.7%","90%","1.5%"],["A firm earns $45k on $300k equity. ROE?","15%","6.7%","45%","30%"]],
+["CALC","be","Break-even = Fixed ÷ (Price − Variable).",["Fixed costs $20,000, price $25, variable cost $15. Units to break even?","2,000","800","1,333","500"],["Rent and salaries total $6,000/month. Each $10 pizza costs $4 to make. Pizzas to break even?","1,000","600","1,500","429"]],
+["TF","0.2","The trough is the LOWEST point. The peak is the highest.",[TF_+"The trough is the highest point of the business cycle.","False"],[TF_+"After a peak comes contraction, when economic activity slows.","True"]],
+["SC","0.1","Lower price → more buyers. Higher price → fewer.",["A theater drops Tuesday tickets from $15 to $8. Attendance most likely:","Increases","Decreases","Stays the same","Drops to zero"],["When a product's price is high, consumer demand is usually:","Low","High","Unaffected","Unlimited"]],
+["SC","2.1","Merged institutions get more liquid capital. Convenience and lower fees help customers, not the institution.",["Two credit unions merge. Which benefit goes to the INSTITUTION itself?","More liquid capital","One-stop shopping for members","Lower fees for members","More branches for members"],["What's a direct benefit of consolidation TO financial institutions?","More liquid capital","Customer convenience","Less regulation","No more competition"]],
+["TF","3.3","Retained earnings are profits KEPT, not paid out.",[TF_+"Retained earnings are profits paid out to shareholders as dividends.","False"],[TF_+"A company that pays no dividends adds all its net income to retained earnings.","True"]],
+["SC","7.4","Math models of risk probability = risk modeling.",["An insurer uses statistics to estimate the probability of hurricane damage in Florida. This is:","Risk modeling","A risk inventory","Risk avoidance","Captive insurance"],["Creating mathematical representations of processes to understand risk probability is:","Risk modeling","Risk transfer","Risk retention","Compliance"]],
+["CALC","1.2","FV = PV × (1+r)ⁿ. Compound for every year.",["$1,000 at 5% compounded annually for 3 years grows to:","$1,157.63","$1,150.00","$1,050.00","$863.84"],["$4,000 at 3% compounded for 2 years becomes:","$4,243.60","$4,240.00","$4,120.00","$3,770.38"]],
+["SC","5.3","A personal tie that could bias your judgment = conflict of interest.",["Which is a conflict of interest?","An auditor reviews the books of a company her brother owns","An auditor reviews a company she's never worked with","An accountant charges a standard hourly rate","An advisor discloses all fees upfront"],["Melanie avoids clients she has personal ties to. She's avoiding:","A conflict of interest","An ethical dilemma","Insider trading","A compliance audit"]],
+["SC","6.0","Reports that lead managers to move money are guiding decision-making.",["Monthly reports show the warehouse overspending, so leaders shift money to sales. The reports' role:","Guiding decision-making","Ensuring compliance","Tracking employee hours","Marketing the company"],["Financial-info management reports mainly help managers:","Decide how to use funds","Write ads","Hire staff","Pay taxes"]],
+["TF","1.5","Below inflation = losing buying power.",[TF_+"An investment earning 3% while inflation is 4% increases your purchasing power.","False"],[TF_+"For an investment to truly gain, its earnings must exceed the inflation rate.","True"]],
+["SC","6.5","Planned vs actual = variance analysis.",["A project budgeted $50k for materials but spent $58k. Comparing these numbers is:","Variance analysis","Break-even analysis","Marginal analysis","Regression"],["Variance analysis compares ___ costs with ___ costs.","Planned; actual","Fixed; variable","Sunk; future","Direct; indirect"]],
+["SC","4.3","Day-to-day running costs = operating expenses. Buying long-term assets is capital spending.",["Which is an operating expense?","Monthly electricity bill","Buying a new building","Repaying the loan principal","Issuing new stock"],["Which is NOT an operating expense?","Purchasing a delivery truck as a long-term asset","Office rent","Utilities","Employee salaries"]],
+["SC","8.5","Professional associations = career networking. A credit union is a bank.",["A new analyst wants long-term relationships with peers in her field. Best move?","Join a local professional association","Open a credit union account","Follow finance influencers","Take a second job"],["Finance employees build lasting career relationships by joining a:","Professional association","Credit union","Stock exchange","Bank board"]],
+["TF","9.2","Only donations to qualified charities are tax-deductible. Gifts to people aren't.",[TF_+"A $5,000 gift to your cousin is tax-deductible.","False"],[TF_+"Donations to a qualified charity are tax-deductible gifts.","True"]]
+]},
+{n:"Test 6",items:[
+["CALC","1.3","PV = FV ÷ (1+r)ⁿ. Watch the number of years.",["A $12,000 goal in 4 years at 3% compounded requires depositing today about:","$10,661.84","$10,560.00","$11,650.49","$13,506.11"],["To have $20,000 in 5 years at 4% compounded, deposit today about:","$16,438.54","$16,000.00","$19,230.77","$24,333.06"]],
+["SC","cr","Higher current ratio = more able to pay short-term debts. Under 1 is a warning.",["Company A's current ratio is 0.8. Company B's is 2.1. Which is true?","B is better able to pay short-term debts","A is more liquid","Both can easily pay short-term debts","A has more total assets"],["A current ratio below 1.0 suggests the company:","May struggle to pay bills due within a year","Is highly profitable","Has no debt","Has too much cash"]],
+["SC","3.2","The big reason to borrow: interest is tax-deductible. (Borrowing RAISES D/E.)",["A CFO says, 'Fund the expansion with a loan, not new shares.' Her strongest financial reason:","Interest on the loan is tax-deductible","Lenders become owners","Loans never need repaying","It lowers the D/E ratio"],["Which financing choice RAISES a firm's D/E ratio but may lower its taxes?","Taking out a large bank loan","Issuing new common stock","Retaining all earnings","Selling shares to employees"]],
+["TF","2.5","Home bias comes from seeing foreign markets as riskier, not knowing them better.",[TF_+"Home bias happens because investors know foreign markets BETTER than their own.","False"],[TF_+"Seeing international investing as riskier can cause home bias.","True"]],
+["SC","2.0","Short-term + safe = money market.",["An investor needs cash in 6 months and can't risk losing principal. Most suitable market:","Money market","Capital market","Futures market","Equity market"],["Talani invests in a money market. Which might she buy?","Treasury bills","Shares of stock","Long-term corporate bonds","Real estate"]],
+["SC","7.2","Removing unnecessary steps = Lean (waste). Cutting defect rates = Six Sigma.",["A hospital cuts wait times by removing unnecessary admission steps. Which methodology fits best?","Lean","Six Sigma","Total Quality Control","Benchmarking"],["A chip maker wants to cut defective chips from 3% to 0.001%. Which methodology fits best?","Six Sigma","Lean","Kanban","Agile"]],
+["TF","2.2","Convergence = combining banking, insurance, investing. Selling them off is the opposite.",[TF_+"When a bank and insurer merge onto one enterprise system, that's convergence.","True"],[TF_+"Convergence means a financial firm sells off its insurance and investing units to focus only on banking.","False"]],
+["CALC","be","Profit = units × (price − variable) − fixed.",["Widgets sell for $40. Variable cost $25. Fixed costs $30,000. It sells 2,500 widgets. Profit?","$7,500","$37,500","$70,000","−$7,500"],["Price $12, variable cost $8, fixed $4,000. Selling 1,500 units gives profit of:","$2,000","$6,000","$14,000","−$2,000"]],
+["NOT","6.1","Variance analysis is budgeting, not data mining. Rule induction, regression, clustering are data mining.",["Which is NOT a data mining technique?","Variance analysis","Rule induction","Regression","Clustering"],["'IF age under 25 AND car is a sports car THEN high risk' is an example of:","Rule induction","Regression","Futuring","Sampling"]],
+["SC","0.3","Utilities are non-cyclical: steady in recessions. Luxury, cruises, and homebuilders are cyclical.",["During a recession, which stock would you expect to hold value BEST?","An electric utility","A luxury handbag brand","A cruise line","A home builder"],["Non-cyclical industries' stock prices across the business cycle tend to:","Remain steady throughout all phases","Steadily decrease during expansion","Rise only during contraction","Move exactly with GDP"]],
+["SC","5.4","Ethical dilemma = higher stakes because someone could be harmed.",["Which BEST describes an ethical dilemma rather than an everyday choice?","A choice where any option could cause someone harm","Deciding which pen to buy","Following an obvious company rule","Choosing lunch for the team"],["In a(n) ___, the stakes are higher because someone could be harmed.","Ethical dilemma","Conflict of interest","Compliance audit","Risk inventory"]],
+["TF","pe","P/E = price ÷ EPS. Price up with EPS flat → P/E goes UP.",[TF_+"If a stock's price rises while EPS stays the same, its P/E ratio goes down.","False"],[TF_+"P/E = stock price ÷ earnings per share.","True"]],
+["SC","2.3","World Bank Group = financing + advice for development.",["Which institution provides financing AND advice to encourage economic development?","World Bank Group","Commonwealth of Nations","OPEC","European Central Bank"],["A developing country borrows to build a power grid with expert guidance. Likely lender:","World Bank Group","Federal Reserve","New York Stock Exchange","Bank of England"]],
+["SC","4.1","Spent and unrecoverable = sunk. Ignore it in future decisions.",["A firm spent $8,000 training a hire who quit after two weeks. That $8,000 is a:","Sunk cost","Variable cost","Opportunity cost","Fixed cost"],["A company paid $30,000 for a study on a product it later cancels. For next year's budget, that $30,000 should be:","Ignored as a sunk cost","Recovered by relaunching the product","Counted as a future cost","Added to fixed costs"]],
+["CALC","3.4","Equity = assets − liabilities.",["Total assets $900k, total liabilities $350k. Shareholders' equity?","$550,000","$1,250,000","$350,000","2.57"],["A company has $2M in assets and $1.2M in liabilities. Equity?","$800,000","$3.2M","$1.2M","0.6"]]
+]}
+];
+const TFMT={SC:"Scenario",TF:"True / False",CALC:"Calculation",NOT:"Which is NOT",DEF:"Definition"};
+let TB=S.get("testBest",{}),T=null;
+function drawTests(){
+  const lv=["Hard","Hard","Harder","Harder","Hardest","Hardest"];
+  $("#tests").innerHTML=TESTS.map((x,i)=>`<div class="les" data-i="${i}">${TB[i]!=null?`<span class="ck">${TB[i]}%</span>`:""}<span class="e">📝</span><b>${x.n}</b><span>${x.items.length} Qs · ${lv[i]}</span></div>`).join("")+`<div class="les" data-i="r"><span class="e">🎲</span><b>Random final</b><span>20 Qs from all tests</span></div>`;
+  document.querySelectorAll("#tests .les").forEach(d=>d.onclick=()=>startTest(d.dataset.i));
+}
+function vOpts(it,vi){const v=it[3+vi],base=it[3];if(v.length===2)return{q:v[0],a:v[1],o:["True","False"]};const src=v.length>1?v:base;return{q:v[0],a:src[1],o:shuf(src.slice(1))}}
+function vizHTML(k){if(!k)return"";let s="";if(/^\d+\.\d+$/.test(k)){const[a,b]=k.split(".").map(Number);const sc=L[a]&&L[a].s[b];if(sc&&sc.v)s=sc.v()}else if(VZ[k])s=VZ[k]();return s?svg(s):""}
+function startTest(i){
+  let items,name;
+  if(i==="r"){items=shuf(TESTS.flatMap(x=>x.items)).slice(0,20);name="Random final"}else{items=TESTS[+i].items;name=TESTS[+i].n}
+  T={i,name,q:shuf(items).map(it=>({it,vi:Math.random()<.5?0:1,re:0})),p:0,first:0,fixed:0,total:items.length,missed:new Set(),still:[]};
+  $("#tlist").style.display="none";$("#trun").style.display="block";showT();
+}
+function showT(){
+  const c=$("#tcard");
+  if(T.p>=T.q.length){endT();return}
+  const cur=T.q[T.p],{q,a,o}=vOpts(cur.it,cur.vi);cur.a=a;
+  const firstDone=T.q.slice(0,T.p).filter(x=>!x.re).length+(cur.re?0:1);
+  $("#tbar").style.width=(T.p/T.q.length*100)+"%";
+  $("#tinfo").textContent=`${T.name} · Q${Math.min(firstDone,T.total)}/${T.total}`+(T.q.length>T.total?` · ${T.q.length-T.total} rephrased retries`:"");
+  c.innerHTML=`<span class="tag f">${TFMT[cur.it[0]]}</span>${cur.re?'<span class="tag" style="background:#fff6e6;color:#b45309">🔁 Rephrased retry</span>':""}<p class="q">${q}</p>`+o.map(x=>`<button class="opt">${x}</button>`).join("")+`<div id="tfb"></div>`;
+  c.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answerT(b,cur));
+}
+function answerT(b,cur){
+  const c=$("#tcard"),ok=b.textContent===cur.a;
+  c.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(x.textContent===cur.a)x.classList.add("good")});
+  if(ok){
+    if(cur.re)T.fixed++;else T.first++;
+    $("#tfb").innerHTML=`<div class="why on" style="background:#eafaf1">✓ ${cur.re?"Fixed it.":"Correct."} ${cur.it[2]}</div><div class="row"><button class="btn" id="tnx">Next →</button></div>`;
+  }else{
+    b.classList.add("bad");T.missed.add(cur.it);
+    if(cur.re<2){const at=Math.min(T.p+4,T.q.length);T.q.splice(at,0,{it:cur.it,vi:1-cur.vi,re:cur.re+1})}else T.still.push(cur.it);
+    $("#tfb").innerHTML=`<div class="fb"><div class="fbx"><span class="you">✗ You picked: ${b.textContent}</span><span class="okk">✓ Answer: ${cur.a}</span></div>${vizHTML(cur.it[1])}<p>${cur.it[2]}</p><p class="note">${cur.re<2?"🔁 This comes back reworded in a few questions.":"Review this one in the Learn tab."}</p></div><div class="row"><button class="btn" id="tnx">Continue →</button></div>`;
+  }
+  $("#tnx").onclick=()=>{T.p++;showT();window.scrollTo(0,0)};
+  $("#tfb").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function endT(){
+  const pct=Math.round(T.first/T.total*100);
+  if(T.i!=="r"&&(TB[T.i]==null||pct>TB[T.i])){TB[T.i]=pct;S.set("testBest",TB)}
+  const still=[...new Set(T.still)];
+  $("#tbar").style.width="100%";
+  $("#tcard").innerHTML=`<div class="done"><div class="big">${pct}%</div><p class="note">First try: ${T.first}/${T.total} · Fixed on retry: ${T.fixed} · Still shaky: ${still.length}</p></div>`+(still.length?`<p class="q" style="font-size:15px">Review these:</p>`+still.map(it=>`<div class="why on" style="margin-bottom:8px"><b>${it[3][1]&&it[3].length>2?it[3][1]:""}</b> ${it[2]}</div>`).join(""):"")+`<div class="row"><button class="btn ghost" id="tback">All tests</button><button class="btn" id="tre">Retake (new order)</button></div>`;
+  $("#tback").onclick=()=>{$("#trun").style.display="none";$("#tlist").style.display="block";drawTests()};
+  $("#tre").onclick=()=>startTest(T.i);
+}
+$("#tquit").onclick=()=>{$("#trun").style.display="none";$("#tlist").style.display="block";drawTests()};
+drawTests();
 
 /* ========== INIT ========== */
 pill();drawLessons();startQuiz();loadC(false);press("C");
