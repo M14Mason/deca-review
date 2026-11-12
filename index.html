@@ -351,7 +351,7 @@ const CON=RAW.map(r=>({id:r[0],area:r[1],t:r[2],d:r[3],why:r[4]||("“"+r[2]+"�
 const byId=Object.fromEntries(CON.map(c=>[c.id,c]));
 
 /* ========== HELPERS ========== */
-const S={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const S={get(k,d){try{let r=localStorage.getItem("deca."+k);if(r===null)r=localStorage.getItem(k);const v=JSON.parse(r);return v??d}catch(e){return d}},set(k,v){try{localStorage.setItem("deca."+k,JSON.stringify(v))}catch(e){}}};
 const $=s=>document.querySelector(s);
 const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const pick=a=>a[Math.random()*a.length|0];
@@ -750,6 +750,8 @@ $("#synci").onclick=()=>{try{const d=JSON.parse(decodeURIComponent(escape(atob($
  Object.entries(d.m||{}).forEach(([k,v])=>M[k]=Math.max(M[k]||0,v));Object.keys(d.l||{}).forEach(k=>doneL[k]=1);Object.entries(d.t||{}).forEach(([k,v])=>TB[k]=Math.max(TB[k]??0,v));
  S.set("mastery",M);S.set("lessons",doneL);S.set("testBest",TB);pill();drawLessons();drawTests();$("#syncmsg").textContent="✓ Imported: "+mastered()+"/"+CON.length+" mastered."}catch(e){$("#syncmsg").textContent="That code didn't work. Copy the whole thing and try again."}};
 
+if(location.hash.startsWith("#restore-")){$("#synct").value=location.hash.slice(9);$("#synci").click();history.replaceState(null,"",location.pathname);setTimeout(()=>alertBox(),0)}
+function alertBox(){$("#syncm").style.display="flex"}
 /* ========== INIT ========== */
 pill();drawLessons();startQuiz();loadC(false);press("C");
 </script>
